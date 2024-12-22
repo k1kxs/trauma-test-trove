@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Toaster } from "@/components/ui/toaster";
 import Login from "@/components/Login";
 import Welcome from "@/components/Welcome";
 import TestSelection from "@/components/TestSelection";
@@ -84,10 +84,20 @@ const Index = () => {
             <Button
               variant="outline"
               onClick={handleBack}
-              className="w-full flex items-center justify-center gap-2"
+              className={`w-full flex items-center justify-center gap-2 ${
+                currentScreen === "welcome" 
+                  ? "bg-gray-200 hover:bg-gray-300 text-gray-700 uppercase" 
+                  : ""
+              }`}
             >
-              <ArrowLeft className="w-4 h-4" />
-              Назад
+              {currentScreen === "welcome" ? (
+                "Редактировать данные"
+              ) : (
+                <>
+                  <ArrowLeft className="w-4 h-4" />
+                  Назад
+                </>
+              )}
             </Button>
           </div>
         )}
