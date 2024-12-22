@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -7,6 +8,8 @@ interface TestSelectionProps {
 }
 
 const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
+  const [showSections, setShowSections] = useState(false);
+  
   const sections = [
     "Верхняя конечность",
     "Нижняя конечность",
@@ -14,6 +17,14 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
     "Таз",
     "Грудная клетка"
   ];
+
+  const handleAllSectionsClick = () => {
+    onSectionSelect(null);
+  };
+
+  const handleSelectBySectionsClick = () => {
+    setShowSections(true);
+  };
 
   return (
     <motion.div
@@ -29,25 +40,41 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button 
-            onClick={() => onSectionSelect(null)} 
-            className="w-full mb-4"
-          >
-            Пройти тестирование по всем разделам
-          </Button>
-          
-          <div className="space-y-2">
-            {sections.map((section) => (
-              <Button
-                key={section}
-                onClick={() => onSectionSelect(section)}
-                variant="outline"
+          {!showSections ? (
+            <div className="space-y-4">
+              <Button 
+                onClick={handleAllSectionsClick} 
                 className="w-full"
               >
-                {section}
+                Пройти тестирование по всем разделам
               </Button>
-            ))}
-          </div>
+              <Button 
+                onClick={handleSelectBySectionsClick}
+                variant="outline" 
+                className="w-full"
+              >
+                Пройти тестирование по отдельным разделам
+              </Button>
+            </div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-2"
+            >
+              {sections.map((section) => (
+                <Button
+                  key={section}
+                  onClick={() => onSectionSelect(section)}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {section}
+                </Button>
+              ))}
+            </motion.div>
+          )}
         </CardContent>
       </Card>
     </motion.div>
