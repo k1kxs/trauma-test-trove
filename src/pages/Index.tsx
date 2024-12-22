@@ -7,6 +7,7 @@ import TestInterface from "@/components/TestInterface";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 type UserData = {
   fullName: string;
@@ -61,49 +62,67 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto p-4">
-        {currentScreen === "login" && <Login onLogin={handleLogin} />}
-        {currentScreen === "welcome" && (
-          <Welcome 
-            userName={userData?.fullName || ""} 
-            onStartTest={handleStartTest} 
-          />
-        )}
-        {currentScreen === "selection" && (
-          <TestSelection onSectionSelect={handleSectionSelect} />
-        )}
-        {currentScreen === "test" && (
-          <TestInterface 
-            section={selectedSection} 
-            onComplete={handleTestComplete} 
-          />
-        )}
-        
-        {currentScreen !== "login" && (
-          <div className="mt-6">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className={`w-full flex items-center justify-center gap-2 ${
-                currentScreen === "welcome" 
-                  ? "bg-gray-200 hover:bg-gray-300 text-gray-700 uppercase" 
-                  : ""
-              }`}
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-background to-secondary/30"
+    >
+      <div className="max-w-md mx-auto p-6">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="space-y-6"
+        >
+          {currentScreen === "login" && <Login onLogin={handleLogin} />}
+          {currentScreen === "welcome" && (
+            <Welcome 
+              userName={userData?.fullName || ""} 
+              onStartTest={handleStartTest} 
+            />
+          )}
+          {currentScreen === "selection" && (
+            <TestSelection onSectionSelect={handleSectionSelect} />
+          )}
+          {currentScreen === "test" && (
+            <TestInterface 
+              section={selectedSection} 
+              onComplete={handleTestComplete} 
+            />
+          )}
+          
+          {currentScreen !== "login" && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.3 }}
+              className="mt-6"
             >
-              {currentScreen === "welcome" ? (
-                "Редактировать данные"
-              ) : (
-                <>
-                  <ArrowLeft className="w-4 h-4" />
-                  Назад
-                </>
-              )}
-            </Button>
-          </div>
-        )}
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className={`w-full flex items-center justify-center gap-2 shadow-sm ${
+                  currentScreen === "welcome" 
+                    ? "bg-gray-100 hover:bg-gray-200 text-gray-700 uppercase tracking-wide font-medium" 
+                    : "hover:bg-accent/80"
+                }`}
+              >
+                {currentScreen === "welcome" ? (
+                  "РЕДАКТИРОВАТЬ ДАННЫЕ"
+                ) : (
+                  <>
+                    <ArrowLeft className="w-4 h-4" />
+                    Назад
+                  </>
+                )}
+              </Button>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
-    </div>
+      <Toaster />
+    </motion.div>
   );
 };
 
