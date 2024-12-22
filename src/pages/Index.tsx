@@ -4,6 +4,8 @@ import Welcome from "@/components/Welcome";
 import TestSelection from "@/components/TestSelection";
 import TestInterface from "@/components/TestInterface";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 type UserData = {
   fullName: string;
@@ -39,6 +41,24 @@ const Index = () => {
     setSelectedSection(null);
   };
 
+  const handleBack = () => {
+    switch (currentScreen) {
+      case "welcome":
+        setCurrentScreen("login");
+        setUserData(null);
+        break;
+      case "selection":
+        setCurrentScreen("welcome");
+        break;
+      case "test":
+        setCurrentScreen("selection");
+        setSelectedSection(null);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto p-4">
@@ -57,6 +77,19 @@ const Index = () => {
             section={selectedSection} 
             onComplete={handleTestComplete} 
           />
+        )}
+        
+        {currentScreen !== "login" && (
+          <div className="mt-6">
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Назад
+            </Button>
+          </div>
         )}
       </div>
     </div>
