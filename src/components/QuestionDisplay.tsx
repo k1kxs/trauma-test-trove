@@ -34,11 +34,11 @@ const QuestionDisplay = ({
         <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
-      <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
+      <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
         <img
           src={question.image}
           alt="Тестовое изображение"
-          className="w-full h-full object-contain p-2"
+          className="w-full h-full object-contain"
         />
       </div>
 
