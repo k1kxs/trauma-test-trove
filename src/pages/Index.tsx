@@ -74,7 +74,7 @@ const Index = () => {
           <motion.img
             src="/lovable-uploads/f458007b-7024-435d-86b6-9a36ee668797.png"
             alt="ОрГМУ Логотип"
-            className="w-48 h-auto mx-auto drop-shadow-md hover:drop-shadow-xl transition-all duration-300"
+            className="w-48 h-auto mx-auto"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
