@@ -137,9 +137,14 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(new Array(mockQuestions.length).fill(false));
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
+    const newAnsweredQuestions = [...answeredQuestions];
+    newAnsweredQuestions[currentQuestion] = true;
+    setAnsweredQuestions(newAnsweredQuestions);
+    
     if (answerIndex === mockQuestions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
@@ -152,6 +157,15 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
         setShowResult(true);
       }
     }, 1000);
+  };
+
+  const handleEarlyCompletion = () => {
+    // Calculate remaining correct answers based on current state
+    let totalCorrect = correctAnswers;
+    
+    // Count only previously recorded correct answers
+    // Unanswered questions are automatically marked as incorrect
+    setShowResult(true);
   };
 
   if (showResult) {
@@ -184,7 +198,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
             totalQuestions={mockQuestions.length}
             selectedAnswer={selectedAnswer}
             onAnswerSelect={handleAnswerSelect}
-            onComplete={onComplete}
+            onComplete={handleEarlyCompletion}
           />
         </CardContent>
       </Card>
