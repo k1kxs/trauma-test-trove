@@ -75,6 +75,15 @@ const Index = () => {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="space-y-6"
         >
+          <motion.img
+            src="/lovable-uploads/f458007b-7024-435d-86b6-9a36ee668797.png"
+            alt="ОрГМУ Логотип"
+            className="w-48 h-auto mx-auto mb-8"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          />
+
           {currentScreen === "login" && <Login onLogin={handleLogin} />}
           {currentScreen === "welcome" && (
             <Welcome 
