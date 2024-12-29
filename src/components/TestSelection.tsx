@@ -65,7 +65,7 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               <motion.div variants={item}>
                 <Button 
                   onClick={handleAllSectionsClick} 
-                  className="w-full bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium py-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
+                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
                 >
                   Пройти тестирование по всем разделам
                 </Button>
@@ -74,7 +74,7 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
                 <Button 
                   onClick={handleSelectBySectionsClick}
                   variant="outline"
-                  className="w-full bg-gray-50/50 hover:bg-gray-100/50 text-gray-700 font-medium py-6 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200"
+                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-gray-100/50 text-gray-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200"
                 >
                   Пройти тестирование по отдельным разделам
                 </Button>
@@ -92,7 +92,7 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
                   <Button
                     onClick={() => onSectionSelect(section)}
                     variant="outline"
-                    className="w-full bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium py-6 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300"
+                    className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300"
                   >
                     {section}
                   </Button>
