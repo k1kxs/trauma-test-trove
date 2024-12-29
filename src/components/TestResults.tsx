@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface TestResultsProps {
@@ -31,12 +30,6 @@ const TestResults = ({ correctAnswers, totalQuestions, onComplete }: TestResults
               {(correctAnswers / totalQuestions) * 100}% верных ответов
             </p>
           </div>
-          <Button 
-            onClick={onComplete} 
-            className="w-full bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
-          >
-            Завершить
-          </Button>
         </CardContent>
       </Card>
     </motion.div>
