@@ -37,9 +37,6 @@ const TestResults = ({
             <p className="text-xl text-gray-700">
               Неправильных ответов: {incorrectAnswers}
             </p>
-            <p className="text-gray-600">
-              {(correctAnswers / totalQuestions * 100).toFixed(1)}% верных ответов
-            </p>
           </div>
           <Button
             onClick={onComplete}
