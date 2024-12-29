@@ -91,8 +91,7 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
                 <motion.div key={section} variants={item}>
                   <Button
                     onClick={() => onSectionSelect(section)}
-                    variant="outline"
-                    className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300"
+                    className="w-full min-h-[4rem] h-auto whitespace-normal bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
                   >
                     {section}
                   </Button>
