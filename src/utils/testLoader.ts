@@ -7,7 +7,7 @@ export interface QuestionData {
 }
 
 async function fetchQuestionDirs(section: string): Promise<string[]> {
-  const response = await fetch(`tests/${section}`);
+  const response = await fetch(`/tests/${section}`);
   const data = await response.text();
   const regex = /<a href="([^"]+)">/g;
   const dirs: string[] = [];
@@ -21,7 +21,7 @@ async function fetchQuestionDirs(section: string): Promise<string[]> {
 }
 
 async function parseQuestionFile(section: string, dir: string): Promise<QuestionData> {
-  const questionText = await fetch(`tests/${section}/${dir}/question.txt`).then(res => res.text());
+  const questionText = await fetch(`/tests/${section}/${dir}/question.txt`).then(res => res.text());
   const lines = questionText.split("\n");
   
   const correctAnswerLetter = lines[5].trim();
@@ -29,7 +29,7 @@ async function parseQuestionFile(section: string, dir: string): Promise<Question
 
   return {
     id: parseInt(dir.replace('Q', '')),
-    image: `tests/${section}/${dir}/image.png`,
+    image: `/tests/${section}/${dir}/image.png`,
     question: lines[0],
     options: [lines[1], lines[2], lines[3], lines[4]],
     correctAnswer: correctAnswerIndex
