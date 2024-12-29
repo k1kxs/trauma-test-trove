@@ -45,39 +45,33 @@ const QuestionDisplay = ({
         />
       </div>
 
-      <div className="space-y-6">
-        <p className="text-xl font-medium text-gray-800 text-center">
-          {question.question}
-        </p>
-
-        <div className="grid gap-3">
-          {question.options.map((option, index) => (
-            <Button
-              key={index}
-              onClick={() => onAnswerSelect(index)}
-              variant={selectedAnswer === index ? 
-                (index === question.correctAnswer ? "default" : "destructive") 
-                : "outline"
+      <div className="grid gap-3">
+        {question.options.map((option, index) => (
+          <Button
+            key={index}
+            onClick={() => onAnswerSelect(index)}
+            variant={selectedAnswer === index ? 
+              (index === question.correctAnswer ? "default" : "destructive") 
+              : "outline"
+            }
+            className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
+              ${selectedAnswer === null ? 
+                'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
+                ''
               }
-              className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
-                ${selectedAnswer === null ? 
-                  'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
-                  ''
-                }
-                ${selectedAnswer === index ? 
-                  (index === question.correctAnswer ? 
-                    'bg-green-500 hover:bg-green-600 text-white border-none' : 
-                    'bg-red-500 hover:bg-red-600 text-white border-none'
-                  ) : 
-                  'bg-gray-50/50 text-gray-700 border-gray-200'
-                }
-              `}
-              disabled={selectedAnswer !== null}
-            >
-              {option}
-            </Button>
-          ))}
-        </div>
+              ${selectedAnswer === index ? 
+                (index === question.correctAnswer ? 
+                  'bg-green-500 hover:bg-green-600 text-white border-none' : 
+                  'bg-red-500 hover:bg-red-600 text-white border-none'
+                ) : 
+                'bg-gray-50/50 text-gray-700 border-gray-200'
+              }
+            `}
+            disabled={selectedAnswer !== null}
+          >
+            {option}
+          </Button>
+        ))}
       </div>
     </div>
   );
