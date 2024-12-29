@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { ArrowLeft, Eye } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 interface TestResultsProps {
   correctAnswers: number;
@@ -24,17 +23,6 @@ const TestResults = ({
   onComplete,
   questions = []
 }: TestResultsProps) => {
-  const navigate = useNavigate();
-  const incorrectQuestions = questions.filter(
-    (q) => q.userAnswer !== undefined && q.userAnswer !== q.correctAnswer
-  );
-
-  const handleViewErrors = () => {
-    navigate('/incorrect-answers', { 
-      state: { incorrectQuestions } 
-    });
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -56,16 +44,8 @@ const TestResults = ({
           </div>
 
           <Button
-            onClick={handleViewErrors}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-          >
-            <Eye className="w-4 h-4" />
-            Посмотреть ошибки
-          </Button>
-
-          <Button
             onClick={onComplete}
-            className="w-full flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
           >
             <ArrowLeft className="w-4 h-4" />
             Вернуться к выбору раздела
