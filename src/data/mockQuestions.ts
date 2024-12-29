@@ -4,7 +4,7 @@ export const mockQuestions: Question[] = [
   {
     id: 1,
     image: "/placeholder.svg",
-    question: "Какой тип перелома изображен на рентгенограмме?",
+    question: "",
     options: [
       "Поперечный перелом",
       "Косой перелом",
