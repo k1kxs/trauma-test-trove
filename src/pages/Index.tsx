@@ -93,38 +93,34 @@ const Index = () => {
             <TestSelection onSectionSelect={handleSectionSelect} />
           )}
           {currentScreen === "test" && (
-            <TestInterface 
-              section={selectedSection} 
-              onComplete={handleTestComplete} 
-            />
-          )}
-          
-          {currentScreen !== "login" && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
-              className="mt-6"
-            >
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                className={`w-full flex items-center justify-center gap-2 shadow-sm ${
-                  currentScreen === "welcome" 
-                    ? "bg-gradient-to-r from-purple-600/10 to-blue-500/10 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500 border-none font-semibold uppercase tracking-wide shadow-md" 
-                    : "bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-500"
-                }`}
+            <>
+              <TestInterface 
+                section={selectedSection} 
+                onComplete={handleTestComplete} 
+              />
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+                className="mt-6 space-y-3"
               >
-                {currentScreen === "welcome" ? (
-                  "РЕДАКТИРОВАТЬ ДАННЫЕ"
-                ) : (
-                  <>
-                    <ArrowLeft className="w-4 h-4" />
-                    Назад
-                  </>
-                )}
-              </Button>
-            </motion.div>
+                <Button
+                  variant="outline"
+                  onClick={handleTestComplete}
+                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-red-50/50 text-gray-700 hover:text-red-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-red-300"
+                >
+                  Завершить тестирование
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-500"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Назад
+                </Button>
+              </motion.div>
+            </>
           )}
         </motion.div>
       </div>

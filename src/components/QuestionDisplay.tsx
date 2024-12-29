@@ -80,14 +80,6 @@ const QuestionDisplay = ({
           ))}
         </div>
       </div>
-
-      <Button 
-        onClick={onComplete} 
-        variant="outline"
-        className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-red-50/50 text-gray-700 hover:text-red-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-red-300 mt-8"
-      >
-        Завершить тестирование
-      </Button>
     </div>
   );
 };
