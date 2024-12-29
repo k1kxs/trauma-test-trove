@@ -111,16 +111,18 @@ const Index = () => {
                 >
                   Завершить тестирование
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-500"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Назад
-                </Button>
               </motion.div>
             </>
+          )}
+          {currentScreen !== "test" && (
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-300 shadow-sm hover:shadow-md transition-all duration-500"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Назад
+            </Button>
           )}
         </motion.div>
       </div>
