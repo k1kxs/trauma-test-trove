@@ -88,7 +88,7 @@ const Index = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-xl font-semibold text-center text-gray-800 mb-8"
+            className="text-2xl font-semibold text-center text-gray-800 mb-8"
           >
             Кафедра травматологии и ортопедии
           </motion.h1>
