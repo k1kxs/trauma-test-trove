@@ -82,7 +82,15 @@ const Index = () => {
             />
           )}
 
-          {currentScreen === "login" && <Login onLogin={handleLogin} />}
+          {currentScreen === "login" && (
+            <>
+              <Login onLogin={handleLogin} />
+              <div className="text-center text-sm text-gray-500 mt-8">
+                <p>Сделано:</p>
+                <p>Дмитриевым Кириллом Александровичем</p>
+              </div>
+            </>
+          )}
           {currentScreen === "welcome" && (
             <Welcome 
               userName={userData?.fullName || ""} 
