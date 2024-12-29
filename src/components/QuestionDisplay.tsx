@@ -38,7 +38,7 @@ const QuestionDisplay = ({
         <img
           src={question.image}
           alt="Тестовое изображение"
-          className="w-full h-full object-contain p-4"
+          className="w-full h-full object-contain p-2"
         />
       </div>
 
