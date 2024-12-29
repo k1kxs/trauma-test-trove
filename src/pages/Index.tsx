@@ -78,11 +78,20 @@ const Index = () => {
           <motion.img
             src="/lovable-uploads/f458007b-7024-435d-86b6-9a36ee668797.png"
             alt="ОрГМУ Логотип"
-            className="w-48 h-auto mx-auto mb-8"
+            className="w-48 h-auto mx-auto"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           />
+          
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="text-xl font-semibold text-center text-gray-800 mb-8"
+          >
+            Кафедра травматологии и ортопедии
+          </motion.h1>
 
           {currentScreen === "login" && <Login onLogin={handleLogin} />}
           {currentScreen === "welcome" && (
