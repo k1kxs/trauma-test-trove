@@ -106,13 +106,6 @@ const Index = () => {
               >
                 <Button
                   variant="outline"
-                  onClick={handleTestComplete}
-                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gradient-to-r from-red-500 via-red-600 to-red-500 hover:from-red-600 hover:via-red-700 hover:to-red-600 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
-                >
-                  Завершить тестирование
-                </Button>
-                <Button
-                  variant="outline"
                   onClick={handleBack}
                   className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-500"
                 >
