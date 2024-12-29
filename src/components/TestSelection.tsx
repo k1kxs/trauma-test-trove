@@ -74,9 +74,9 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
                 <Button 
                   onClick={handleSelectBySectionsClick}
                   variant="outline"
-                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-gray-100/50 text-gray-700 font-medium px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200"
+                  className="w-full min-h-[4.5rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-gray-100/50 text-gray-700 font-medium text-lg px-4 py-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200"
                 >
-                  Пройти тестирование по отдельным разделам
+                  По отдельным разделам
                 </Button>
               </motion.div>
             </motion.div>
