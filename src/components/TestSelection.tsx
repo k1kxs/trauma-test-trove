@@ -89,7 +89,7 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               variants={container}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-2 gap-3"
+              className="space-y-2"
             >
               {sections.map((section) => (
                 <motion.div key={section} variants={item}>
