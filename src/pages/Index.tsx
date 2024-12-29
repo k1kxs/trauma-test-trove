@@ -85,8 +85,8 @@ const Index = () => {
           {currentScreen === "login" && (
             <>
               <Login onLogin={handleLogin} />
-              <div className="text-center text-sm text-gray-500 mt-8">
-                <p>Сделали:</p>
+              <div className="text-center text-sm text-gray-500/70 mt-8">
+                <p>Авторы:</p>
                 <p>Дмитриев Кирилл Александрович</p>
                 <p>Захаров Марк Николаевич</p>
                 <p>Сивков Кирилл Дмитриевич</p>
