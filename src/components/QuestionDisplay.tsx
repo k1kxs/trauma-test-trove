@@ -31,11 +31,7 @@ const QuestionDisplay = ({
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex justify-between items-center text-sm text-gray-600">
-          <span>Прогресс</span>
-          <span>Вопрос {currentQuestion + 1} из {totalQuestions}</span>
-        </div>
-        <Progress value={progress} className="h-2 bg-gray-100 mt-3" />
+        <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
       <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
