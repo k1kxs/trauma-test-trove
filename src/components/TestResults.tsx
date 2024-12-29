@@ -37,21 +37,19 @@ const TestResults = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8 space-y-6">
-          <div className="text-center space-y-4 mb-8">
+          <div className="text-center space-y-4">
             <p className="text-2xl font-semibold text-gray-800">
               Правильных ответов: {correctAnswers} из {totalQuestions}
             </p>
           </div>
 
-          <div className="absolute bottom-8 left-8 right-8">
-            <Button
-              onClick={onComplete}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Вернуться к выбору раздела
-            </Button>
-          </div>
+          <Button
+            onClick={onComplete}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Вернуться к выбору раздела
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
