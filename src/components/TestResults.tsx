@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { ArrowLeft, Eye } from "lucide-react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface TestResultsProps {
   correctAnswers: number;
@@ -24,11 +24,16 @@ const TestResults = ({
   onComplete,
   questions = []
 }: TestResultsProps) => {
-  const [showErrors, setShowErrors] = useState(false);
-  
+  const navigate = useNavigate();
   const incorrectQuestions = questions.filter(
     (q) => q.userAnswer !== undefined && q.userAnswer !== q.correctAnswer
   );
+
+  const handleViewErrors = () => {
+    navigate('/incorrect-answers', { 
+      state: { incorrectQuestions } 
+    });
+  };
 
   return (
     <motion.div
@@ -50,45 +55,13 @@ const TestResults = ({
             </p>
           </div>
 
-          {showErrors ? (
-            <div className="space-y-6">
-              {incorrectQuestions.map((q, index) => (
-                <div key={q.id} className="p-4 bg-white/50 rounded-lg space-y-4">
-                  <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
-                    <img
-                      src={q.image}
-                      alt="Тестовое изображение"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <p className="font-medium text-gray-800">{q.question}</p>
-                  <div className="space-y-2">
-                    <p className="text-red-600">
-                      Ваш ответ: {q.options[q.userAnswer || 0]}
-                    </p>
-                    <p className="text-green-600">
-                      Правильный ответ: {q.options[q.correctAnswer]}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              <Button
-                onClick={() => setShowErrors(false)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4" />
-                Скрыть ошибки
-              </Button>
-            </div>
-          ) : (
-            <Button
-              onClick={() => setShowErrors(true)}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-            >
-              <Eye className="w-4 h-4" />
-              Посмотреть ошибки
-            </Button>
-          )}
+          <Button
+            onClick={handleViewErrors}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          >
+            <Eye className="w-4 h-4" />
+            Посмотреть ошибки
+          </Button>
 
           <Button
             onClick={onComplete}
