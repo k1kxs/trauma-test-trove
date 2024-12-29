@@ -34,6 +34,14 @@ const QuestionDisplay = ({
         <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
+      <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
+        <img
+          src={question.image}
+          alt="Тестовое изображение"
+          className="w-full h-full object-contain"
+        />
+      </div>
+
       <div className="space-y-6">
         <p className="text-xl font-medium text-gray-800 text-center">
           {question.question}
