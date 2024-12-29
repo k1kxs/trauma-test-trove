@@ -35,7 +35,7 @@ const QuestionDisplay = ({
       </div>
 
       <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
-        <div className="absolute top-4 right-4 bg-black/75 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+        <div className="absolute top-3 right-3 bg-black/40 text-white px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-[2px]">
           {currentQuestion + 1}/{totalQuestions}
         </div>
         <img
