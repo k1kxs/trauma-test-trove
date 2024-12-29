@@ -65,9 +65,9 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               <motion.div variants={item}>
                 <Button 
                   onClick={handleAllSectionsClick} 
-                  className="w-full min-h-[4rem] h-auto whitespace-normal bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
+                  className="w-full min-h-[4.5rem] h-auto whitespace-normal bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white font-medium text-lg px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
                 >
-                  Пройти тестирование по всем разделам
+                  По всем разделам
                 </Button>
               </motion.div>
               <motion.div variants={item}>
