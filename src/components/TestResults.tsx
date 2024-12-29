@@ -3,11 +3,17 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface TestResultsProps {
   correctAnswers: number;
+  incorrectAnswers: number;
   totalQuestions: number;
   onComplete: () => void;
 }
 
-const TestResults = ({ correctAnswers, totalQuestions, onComplete }: TestResultsProps) => {
+const TestResults = ({ 
+  correctAnswers, 
+  incorrectAnswers,
+  totalQuestions, 
+  onComplete 
+}: TestResultsProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -22,12 +28,15 @@ const TestResults = ({ correctAnswers, totalQuestions, onComplete }: TestResults
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8 space-y-6">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4">
             <p className="text-2xl font-semibold text-gray-800">
               Правильных ответов: {correctAnswers} из {totalQuestions}
             </p>
+            <p className="text-xl text-gray-700">
+              Неправильных ответов: {incorrectAnswers}
+            </p>
             <p className="text-gray-600">
-              {(correctAnswers / totalQuestions) * 100}% верных ответов
+              {(correctAnswers / totalQuestions * 100).toFixed(1)}% верных ответов
             </p>
           </div>
         </CardContent>
