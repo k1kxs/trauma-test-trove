@@ -11,11 +11,15 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const [showSections, setShowSections] = useState(false);
   
   const sections = [
-    "Верхняя конечность",
-    "Нижняя конечность",
+    "Плечо",
+    "Предплечье",
+    "Кисть",
+    "Рёбра",
     "Позвоночник",
     "Таз",
-    "Грудная клетка"
+    "Бедро",
+    "Голень",
+    "Стопа"
   ];
 
   const handleAllSectionsClick = () => {
