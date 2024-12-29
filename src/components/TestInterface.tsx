@@ -160,8 +160,6 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   const handleEarlyCompletion = () => {
-    // Все неотвеченные вопросы автоматически считаются неправильными
-    // Оставляем только уже полученные правильные ответы
     setShowResult(true);
   };
 
