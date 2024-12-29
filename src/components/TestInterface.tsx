@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
@@ -63,12 +63,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       className="max-w-3xl mx-auto w-full"
     >
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-center text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 animate-gradient bg-300%">
-            {section}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-8 pb-8">
+        <CardContent className="px-8 py-8">
           <QuestionDisplay
             question={mockQuestions[currentQuestion]}
             currentQuestion={currentQuestion}
