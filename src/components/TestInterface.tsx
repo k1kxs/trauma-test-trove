@@ -93,7 +93,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="mt-8 overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardHeader className="pb-4 pt-8">
           <CardTitle className="text-center text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 animate-gradient bg-300%">
-            {section ? `Раздел: ${section}` : "Общее тестирование"}
+            {section && `Раздел: ${section}`}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8 space-y-6">
