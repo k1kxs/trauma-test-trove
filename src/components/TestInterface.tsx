@@ -172,12 +172,12 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       className="max-w-3xl mx-auto w-full"
     >
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
-        <CardHeader className="pb-4 pt-8">
+        <CardHeader className="pb-4">
           <CardTitle className="text-center text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 animate-gradient bg-300%">
             {section}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="px-8 pb-8">
           <QuestionDisplay
             question={mockQuestions[currentQuestion]}
             currentQuestion={currentQuestion}
