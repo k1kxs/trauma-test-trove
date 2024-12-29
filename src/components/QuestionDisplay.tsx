@@ -34,7 +34,10 @@ const QuestionDisplay = ({
         <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
-      <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
+      <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
+        <div className="absolute top-4 right-4 bg-black/75 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+          {currentQuestion + 1}/{totalQuestions}
+        </div>
         <img
           src={question.image}
           alt="Тестовое изображение"
