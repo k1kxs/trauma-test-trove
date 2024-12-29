@@ -71,7 +71,7 @@ const Index = () => {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="space-y-6"
         >
-          {currentScreen !== "test" && (
+          {(currentScreen === "login" || currentScreen === "welcome") && (
             <motion.img
               src="/lovable-uploads/f458007b-7024-435d-86b6-9a36ee668797.png"
               alt="ОрГМУ Логотип"
