@@ -109,7 +109,7 @@ const Index = () => {
                 onClick={handleBack}
                 className={`w-full flex items-center justify-center gap-2 shadow-sm ${
                   currentScreen === "welcome" 
-                    ? "bg-gray-100 hover:bg-gray-200 text-gray-700 uppercase tracking-wide font-medium" 
+                    ? "bg-gradient-to-r from-purple-600/10 to-blue-500/10 hover:from-purple-600/20 hover:to-blue-500/20 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500 border-none font-semibold uppercase tracking-wide shadow-md transition-all duration-300 hover:shadow-lg" 
                     : "hover:bg-accent/80"
                 }`}
               >
