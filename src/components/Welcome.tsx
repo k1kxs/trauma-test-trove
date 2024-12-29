@@ -23,7 +23,10 @@ const Welcome = ({ userName, onStartTest }: WelcomeProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-center text-gray-600">
-            Добро пожаловать, {userName}!
+            Добро пожаловать!
+          </p>
+          <p className="text-center text-gray-600">
+            {userName}
           </p>
           <Button 
             onClick={onStartTest} 
