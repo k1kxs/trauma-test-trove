@@ -5,6 +5,7 @@ import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
 import { mockQuestions } from "@/data/mockQuestions";
+import { Button } from "./ui/button";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -36,8 +37,6 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   const handleEarlyCompletion = () => {
-    // Сохраняем текущее количество правильных ответов
-    // Неотвеченные вопросы автоматически считаются неправильными
     setShowResult(true);
   };
 
@@ -75,6 +74,19 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
             onAnswerSelect={handleAnswerSelect}
             onComplete={handleEarlyCompletion}
           />
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+            className="mt-6"
+          >
+            <Button
+              onClick={handleEarlyCompletion}
+              className="w-full min-h-[4rem] h-auto whitespace-normal bg-gradient-to-r from-red-500 via-red-600 to-red-500 hover:from-red-600 hover:via-red-700 hover:to-red-600 text-white font-medium px-4 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg border-none"
+            >
+              Завершить тестирование
+            </Button>
+          </motion.div>
         </CardContent>
       </Card>
     </motion.div>

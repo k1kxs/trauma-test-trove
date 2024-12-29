@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "./ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface TestResultsProps {
   correctAnswers: number;
@@ -39,6 +41,13 @@ const TestResults = ({
               {(correctAnswers / totalQuestions * 100).toFixed(1)}% верных ответов
             </p>
           </div>
+          <Button
+            onClick={onComplete}
+            className="w-full flex items-center justify-center gap-2 mt-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Вернуться к выбору раздела
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
