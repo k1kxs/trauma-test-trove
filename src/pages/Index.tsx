@@ -98,7 +98,7 @@ const Index = () => {
               onComplete={handleTestComplete} 
             />
           )}
-          {currentScreen !== "test" && (
+          {currentScreen !== "login" && currentScreen !== "test" && (
             <Button
               variant="outline"
               onClick={handleBack}
