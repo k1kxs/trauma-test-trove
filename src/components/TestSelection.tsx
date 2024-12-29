@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { availableSections } from "@/utils/testLoader";
 
 interface TestSelectionProps {
   onSectionSelect: (section: string | null) => void;
@@ -10,17 +11,11 @@ interface TestSelectionProps {
 const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const [showSections, setShowSections] = useState(false);
   
-  const sections = [
-    "Плечо",
-    "Предплечье",
-    "Кисть",
-    "Рёбра",
-    "Позвоночник",
-    "Таз",
-    "Бедро",
-    "Голень",
-    "Стопа"
-  ];
+  const sectionNames: { [key: string]: string } = {
+    arms: "Руки",
+    lungs: "Лёгкие",
+    // Add other section translations as needed
+  };
 
   const handleAllSectionsClick = () => {
     onSectionSelect(null);
@@ -91,14 +86,14 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               animate="show"
               className="space-y-2"
             >
-              {sections.map((section) => (
+              {availableSections.map((section) => (
                 <motion.div key={section} variants={item}>
                   <Button
                     onClick={() => onSectionSelect(section)}
                     variant="outline"
                     className="w-full min-h-[3rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium px-3 py-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300 text-sm"
                   >
-                    {section}
+                    {sectionNames[section] || section}
                   </Button>
                 </motion.div>
               ))}
