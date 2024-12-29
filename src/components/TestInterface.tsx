@@ -12,15 +12,14 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [answeredQuestions, setAnsweredQuestions] = useState<boolean[]>(
-    new Array(mockQuestions.length).fill(false)
-  );
+  const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
-    const newAnsweredQuestions = [...answeredQuestions];
-    newAnsweredQuestions[currentQuestion] = true;
-    setAnsweredQuestions(newAnsweredQuestions);
+    setUserAnswers(prev => ({
+      ...prev,
+      [currentQuestion]: answerIndex
+    }));
     
     if (answerIndex === mockQuestions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
@@ -41,13 +40,17 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   if (showResult) {
-    const incorrectAnswers = mockQuestions.length - correctAnswers;
+    const questionsWithUserAnswers = mockQuestions.map(q => ({
+      ...q,
+      userAnswer: userAnswers[mockQuestions.indexOf(q)]
+    }));
+
     return (
       <TestResults
         correctAnswers={correctAnswers}
-        incorrectAnswers={incorrectAnswers}
         totalQuestions={mockQuestions.length}
         onComplete={onComplete}
+        questions={questionsWithUserAnswers}
       />
     );
   }

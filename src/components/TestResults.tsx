@@ -6,7 +6,6 @@ import { useState } from "react";
 
 interface TestResultsProps {
   correctAnswers: number;
-  incorrectAnswers: number;
   totalQuestions: number;
   onComplete: () => void;
   questions: Array<{
@@ -23,7 +22,7 @@ const TestResults = ({
   correctAnswers,
   totalQuestions, 
   onComplete,
-  questions
+  questions = []
 }: TestResultsProps) => {
   const [showErrors, setShowErrors] = useState(false);
   
