@@ -23,10 +23,6 @@ const Index = () => {
   const handleLogin = (data: UserData) => {
     setUserData(data);
     setCurrentScreen("welcome");
-    toast({
-      title: "Успешная авторизация",
-      description: "Добро пожаловать в систему тестирования",
-    });
   };
 
   const handleStartTest = () => {
