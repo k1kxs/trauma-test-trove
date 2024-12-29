@@ -160,11 +160,8 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   const handleEarlyCompletion = () => {
-    // Calculate remaining correct answers based on current state
-    let totalCorrect = correctAnswers;
-    
-    // Count only previously recorded correct answers
-    // Unanswered questions are automatically marked as incorrect
+    // Все неотвеченные вопросы автоматически считаются неправильными
+    // Оставляем только уже полученные правильные ответы
     setShowResult(true);
   };
 
