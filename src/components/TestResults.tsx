@@ -34,9 +34,6 @@ const TestResults = ({
             <p className="text-2xl font-semibold text-gray-800">
               Правильных ответов: {correctAnswers} из {totalQuestions}
             </p>
-            <p className="text-xl text-gray-700">
-              Неправильных ответов: {incorrectAnswers}
-            </p>
           </div>
           <Button
             onClick={onComplete}
