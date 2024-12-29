@@ -60,7 +60,7 @@ const QuestionDisplay = ({
                 (index === question.correctAnswer ? "default" : "destructive") 
                 : "outline"
               }
-              className={`w-full min-h-[4rem] h-auto whitespace-normal font-medium px-4 py-4 rounded-lg transition-all duration-300
+              className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
                 ${selectedAnswer === null ? 
                   'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
                   ''
