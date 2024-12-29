@@ -21,11 +21,11 @@ const Welcome = ({ userName, onStartTest }: WelcomeProps) => {
             Кафедра травматологии ОРГМУ приветствует вас
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-center text-gray-600">
+        <CardContent className="space-y-2">
+          <p className="text-center text-gray-600 text-2xl">
             Добро пожаловать!
           </p>
-          <p className="text-center text-gray-600">
+          <p className="text-center text-gray-600 text-2xl">
             {userName}
           </p>
           <Button 
