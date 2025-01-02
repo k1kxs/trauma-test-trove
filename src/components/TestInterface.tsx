@@ -8,6 +8,10 @@ import { mockQuestions } from "@/data/mockQuestions";
 import { Button } from "./ui/button";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
+  const filteredQuestions = section 
+    ? mockQuestions.filter(q => q.section === section)
+    : mockQuestions;
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -21,12 +25,12 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       [currentQuestion]: answerIndex
     }));
     
-    if (answerIndex === mockQuestions[currentQuestion].correctAnswer) {
+    if (answerIndex === filteredQuestions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
     
     setTimeout(() => {
-      if (currentQuestion < mockQuestions.length - 1) {
+      if (currentQuestion < filteredQuestions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
       } else {
@@ -40,15 +44,15 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   if (showResult) {
-    const questionsWithUserAnswers = mockQuestions.map(q => ({
+    const questionsWithUserAnswers = filteredQuestions.map(q => ({
       ...q,
-      userAnswer: userAnswers[mockQuestions.indexOf(q)]
+      userAnswer: userAnswers[filteredQuestions.indexOf(q)]
     }));
 
     return (
       <TestResults
         correctAnswers={correctAnswers}
-        totalQuestions={mockQuestions.length}
+        totalQuestions={filteredQuestions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
       />
@@ -65,9 +69,9 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardContent className="px-8 py-8">
           <QuestionDisplay
-            question={mockQuestions[currentQuestion]}
+            question={filteredQuestions[currentQuestion]}
             currentQuestion={currentQuestion}
-            totalQuestions={mockQuestions.length}
+            totalQuestions={filteredQuestions.length}
             selectedAnswer={selectedAnswer}
             onAnswerSelect={handleAnswerSelect}
             onComplete={handleEarlyCompletion}

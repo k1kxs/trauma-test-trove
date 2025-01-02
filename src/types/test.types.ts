@@ -4,6 +4,7 @@ export interface Question {
   question: string;
   options: string[];
   correctAnswer: number;
+  section: string;
 }
 
 export interface TestInterfaceProps {
