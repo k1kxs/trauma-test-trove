@@ -7,7 +7,6 @@ interface TestSelectionProps {
 
 const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const sections = [
-    { id: 'comprehensive', name: 'Комплексный тест (все разделы)' },
     { id: 'forearm', name: 'Предплечье' },
     { id: 'hip', name: 'Бедро' },
     { id: 'humerus', name: 'Плечевая кость' },

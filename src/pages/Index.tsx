@@ -16,7 +16,7 @@ type UserData = {
 
 const Index = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [currentScreen, setCurrentScreen] = useState<"login" | "welcome" | "selection" | "test">("login");
+  const [currentScreen, setCurrentScreen] = useState<"login" | "welcome" | "test-type" | "selection" | "test">("login");
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -26,16 +26,25 @@ const Index = () => {
   };
 
   const handleStartTest = () => {
-    setCurrentScreen("selection");
+    setCurrentScreen("test-type");
   };
 
-  const handleSectionSelect = (section: string | null) => {
+  const handleTestTypeSelect = (type: "sections" | "comprehensive") => {
+    if (type === "sections") {
+      setCurrentScreen("selection");
+    } else {
+      setSelectedSection("comprehensive");
+      setCurrentScreen("test");
+    }
+  };
+
+  const handleSectionSelect = (section: string) => {
     setSelectedSection(section);
     setCurrentScreen("test");
   };
 
   const handleTestComplete = () => {
-    setCurrentScreen("selection");
+    setCurrentScreen("test-type");
     setSelectedSection(null);
   };
 
@@ -45,11 +54,18 @@ const Index = () => {
         setCurrentScreen("login");
         setUserData(null);
         break;
-      case "selection":
+      case "test-type":
         setCurrentScreen("welcome");
         break;
+      case "selection":
+        setCurrentScreen("test-type");
+        break;
       case "test":
-        setCurrentScreen("selection");
+        if (selectedSection === "comprehensive") {
+          setCurrentScreen("test-type");
+        } else {
+          setCurrentScreen("selection");
+        }
         setSelectedSection(null);
         break;
       default:
@@ -98,6 +114,38 @@ const Index = () => {
               userName={userData?.fullName || ""} 
               onStartTest={handleStartTest} 
             />
+          )}
+          {currentScreen === "test-type" && (
+            <div className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card
+                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+                  onClick={() => handleTestTypeSelect("comprehensive")}
+                >
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Комплексный тест (все разделы)</h3>
+                  </CardContent>
+                </Card>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+              >
+                <Card
+                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+                  onClick={() => handleTestTypeSelect("sections")}
+                >
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-semibold text-gray-800">Тест по разделам</h3>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           )}
           {currentScreen === "selection" && (
             <TestSelection onSectionSelect={handleSectionSelect} />
