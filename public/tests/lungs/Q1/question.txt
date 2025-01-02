@@ -1,6 +1,7 @@
-Gas exchange
-Blood pumping
-Food digestion
-Waste filtration
+Какая структура соединяет легкие с внешней средой?
+Трахея
+Бронхи
+Альвеолы
+Плевра
 A
 /tests/lungs/Q1/image.png

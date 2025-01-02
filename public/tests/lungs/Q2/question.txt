@@ -1,6 +1,7 @@
-Trachea
-Esophagus
-Bronchi
-Alveoli
-A
+Какая структура отвечает за газообмен в легких?
+Трахея
+Пищевод
+Бронхи
+Альвеолы
+D
 /tests/lungs/Q2/image.png
