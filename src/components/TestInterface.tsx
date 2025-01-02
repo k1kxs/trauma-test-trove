@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button"; // Added this import
+import { Button } from "@/components/ui/button";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
@@ -16,14 +16,38 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
 
-  const { data: questions = [], isLoading } = useQuery({
+  const { data: questions = [], isLoading, error } = useQuery({
     queryKey: ['questions', section],
-    queryFn: () => loadQuestions(section || ''),
-    enabled: !!section
+    queryFn: () => loadQuestions(section),
+    enabled: true,
+    retry: false
   });
 
   if (isLoading) {
-    return <div>Loading questions...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="text-gray-600">Загрузка вопросов...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600 p-4">
+        Произошла ошибка при загрузке вопросов. Пожалуйста, попробуйте позже.
+      </div>
+    );
+  }
+
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="text-center text-gray-600 p-4">
+        Вопросы не найдены для данного раздела.
+      </div>
+    );
   }
 
   const handleAnswerSelect = (answerIndex: string) => {
