@@ -7,17 +7,17 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     
     const lines = content.split('\n').filter(line => line.trim());
     
-    if (lines.length < 6) {
+    if (lines.length < 5) {
       throw new Error('Invalid question file format');
     }
 
     return {
       id: `${section}-${questionId}`,
       section,
-      question: `Question ${questionId}`, // Temporary placeholder
-      image: lines[5], // Get image URL from the sixth line
+      question: `Вопрос ${questionId}`,
       options: lines.slice(0, 4),
-      correctAnswer: lines[4]
+      correctAnswer: lines[4],
+      image: lines[5] || '' // На случай, если URL изображения отсутствует
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
@@ -26,25 +26,12 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 };
 
 export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
-  // Временно возвращаем моковые данные для демонстрации
-  const mockQuestions: QuestionData[] = [
-    {
-      id: "arms-Q1",
-      section: "arms",
-      question: "Question 1",
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-      options: ["Humerus", "Femur", "Tibia", "Radius"],
-      correctAnswer: "A"
-    },
-    {
-      id: "arms-Q2",
-      section: "arms",
-      question: "Question 2",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      options: ["Biceps", "Triceps", "Deltoid", "Trapezius"],
-      correctAnswer: "A"
-    }
-  ];
-
-  return mockQuestions.filter(q => q.section === section);
+  try {
+    // Загружаем первый вопрос (Q1) для выбранной секции
+    const question = await parseQuestionFile(section, 'Q1');
+    return [question];
+  } catch (error) {
+    console.error('Error loading questions:', error);
+    return [];
+  }
 };
