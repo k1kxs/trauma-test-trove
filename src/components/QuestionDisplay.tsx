@@ -19,6 +19,10 @@ const QuestionDisplay = ({
   onAnswerSelect,
   onComplete
 }: QuestionDisplayProps) => {
+  if (!question) {
+    return <div>Loading question...</div>;
+  }
+
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
   const answerLetters = ['A', 'B', 'C', 'D'];
 
@@ -33,8 +37,8 @@ const QuestionDisplay = ({
           {currentQuestion + 1}/{totalQuestions}
         </div>
         <img
-          src={question.image}
-          alt="Тестовое изображение"
+          src={question.image || "/placeholder.svg"}
+          alt="Question image"
           className="w-full h-full object-contain"
         />
       </div>

@@ -7,21 +7,17 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     
     const lines = content.split('\n').filter(line => line.trim());
     
-    if (lines.length < 6) {
+    if (lines.length < 5) {
       throw new Error('Invalid question file format');
     }
-
-    const question = lines[0].split(' - ')[0];
-    const options = lines.slice(1, 5).map(line => line.split(' - ')[0]);
-    const correctAnswer = lines[5].split(' - ')[0];
 
     return {
       id: `${section}-${questionId}`,
       section,
-      question,
+      question: `Question ${questionId}`, // Temporary placeholder
       image: `/tests/${section}/${questionId}/image.png`,
-      options,
-      correctAnswer
+      options: lines.slice(0, 4),
+      correctAnswer: lines[4]
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
@@ -31,21 +27,20 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 
 export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
   // Временно возвращаем моковые данные для демонстрации
-  // В реальном приложении здесь будет логика чтения файлов из папки tests
   const mockQuestions: QuestionData[] = [
     {
       id: "arms-Q1",
       section: "arms",
-      question: "What is the bone in your upper arm called?",
-      image: "/placeholder.svg",
+      question: "Question 1",
+      image: "/placeholder.svg", // Using placeholder image
       options: ["Humerus", "Femur", "Tibia", "Radius"],
       correctAnswer: "A"
     },
     {
       id: "arms-Q2",
       section: "arms",
-      question: "Which muscle flexes the elbow?",
-      image: "/placeholder.svg",
+      question: "Question 2",
+      image: "/placeholder.svg", // Using placeholder image
       options: ["Biceps", "Triceps", "Deltoid", "Trapezius"],
       correctAnswer: "A"
     }
