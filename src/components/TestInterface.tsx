@@ -42,6 +42,8 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   }, [section, toast]);
 
   const handleAnswerSelect = (answerIndex: number) => {
+    if (!questions[currentQuestion]) return;
+    
     setSelectedAnswer(answerIndex);
     setUserAnswers(prev => ({
       ...prev,
@@ -98,6 +100,15 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     );
   }
 
+  const currentQuestionData = questions[currentQuestion];
+  if (!currentQuestionData) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-600">Ошибка загрузки вопроса</p>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -108,7 +119,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardContent className="px-8 py-8">
           <QuestionDisplay
-            question={questions[currentQuestion]}
+            question={currentQuestionData}
             currentQuestion={currentQuestion}
             totalQuestions={questions.length}
             selectedAnswer={selectedAnswer}
