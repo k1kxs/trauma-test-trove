@@ -3,6 +3,9 @@ import { QuestionData } from "@/types/questions.types";
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
     const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
+    if (!response.ok) {
+      throw new Error(`Failed to load question ${questionId} from section ${section}`);
+    }
     const content = await response.text();
     
     const lines = content.split('\n').filter(line => line.trim());
@@ -17,7 +20,7 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
       question: `Вопрос ${questionId}`,
       options: lines.slice(0, 4),
       correctAnswer: lines[4],
-      image: lines[5] || '' // На случай, если URL изображения отсутствует
+      image: lines[5] || ''
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
@@ -26,12 +29,21 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 };
 
 export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
-  try {
-    // Загружаем первый вопрос (Q1) для выбранной секции
-    const question = await parseQuestionFile(section, 'Q1');
-    return [question];
-  } catch (error) {
-    console.error('Error loading questions:', error);
-    return [];
+  const questions: QuestionData[] = [];
+  let questionNumber = 1;
+  
+  while (true) {
+    try {
+      const questionId = `Q${questionNumber}`;
+      const question = await parseQuestionFile(section, questionId);
+      questions.push(question);
+      questionNumber++;
+    } catch (error) {
+      // Если вопрос не найден, прекращаем загрузку
+      break;
+    }
   }
+
+  // Если не найдено ни одного вопроса, возвращаем пустой массив
+  return questions;
 };
