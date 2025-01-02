@@ -11,21 +11,23 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     const content = await response.text();
     const lines = content.trim().split('\n').filter(line => line.trim());
     
-    if (lines.length < 6) {
+    if (lines.length < 5) {
       throw new Error('Invalid question file format');
     }
 
     // File structure:
     // Line 1-4: Options
     // Line 5: Correct answer (A, B, C, or D)
-    // Line 6: Image path
+    const imageId = `photo-${section}-${questionId}`.toLowerCase();
+    const imageUrl = `https://images.unsplash.com/photo-1581595219254-3af40244cd7c`;
+
     return {
       id: `${section}-${questionId}`,
       section,
-      question: questionId,
+      question: lines[0],
       options: lines.slice(0, 4),
       correctAnswer: lines[4].trim(),
-      image: lines[5].trim()
+      image: imageUrl
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
