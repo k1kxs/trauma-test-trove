@@ -11,9 +11,11 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const [showSections, setShowSections] = useState(false);
   
   const sections = [
+    { id: "arms", name: "Руки" },
     { id: "humerus", name: "Плечо" },
     { id: "forearm", name: "Предплечье" },
     { id: "brush", name: "Кисть" },
+    { id: "lungs", name: "Лёгкие" },
     { id: "ribs", name: "Рёбра" },
     { id: "spine", name: "Позвоночник" },
     { id: "pelvis", name: "Таз" },
