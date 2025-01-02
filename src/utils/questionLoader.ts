@@ -19,16 +19,13 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     // Line 1-4: Options
     // Line 5: Correct answer (A, B, C, or D)
     
-    // Generate a unique image URL for each question
-    const imageUrl = `https://images.unsplash.com/photo-1581595219254-3af40244cd7c`;
-
     return {
       id: `${section}-${questionId}`,
       section,
       question: "", // Empty string since we don't need question text
       options: lines.slice(0, 4),
       correctAnswer: lines[4].trim(),
-      image: imageUrl
+      image: `/tests/${section}/${questionId}/image.png` // Use actual image path from the question folder
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
