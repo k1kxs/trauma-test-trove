@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
+import { mockQuestions } from "@/data/mockQuestions";
 import { Button } from "./ui/button";
-import { getRandomQuestionFromEachSection, availableSections, QuestionData } from "@/utils/testLoader";
-import { useToast } from "./ui/use-toast";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -14,32 +13,6 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
-  const [questions, setQuestions] = useState<QuestionData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        setIsLoading(true);
-        const loadedQuestions = section ? 
-          await getRandomQuestionFromEachSection([section]) :
-          await getRandomQuestionFromEachSection(availableSections);
-        setQuestions(loadedQuestions);
-      } catch (error) {
-        console.error("Error loading questions:", error);
-        toast({
-          title: "Ошибка загрузки вопросов",
-          description: "Пожалуйста, проверьте подключение к интернету и попробуйте снова",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadQuestions();
-  }, [section, toast]);
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
@@ -48,12 +21,12 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       [currentQuestion]: answerIndex
     }));
     
-    if (answerIndex === questions[currentQuestion].correctAnswer) {
+    if (answerIndex === mockQuestions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
     
     setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
+      if (currentQuestion < mockQuestions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
       } else {
@@ -66,35 +39,19 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     setShowResult(true);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
-
   if (showResult) {
-    const questionsWithUserAnswers = questions.map(q => ({
+    const questionsWithUserAnswers = mockQuestions.map(q => ({
       ...q,
-      userAnswer: userAnswers[questions.indexOf(q)]
+      userAnswer: userAnswers[mockQuestions.indexOf(q)]
     }));
 
     return (
       <TestResults
         correctAnswers={correctAnswers}
-        totalQuestions={questions.length}
+        totalQuestions={mockQuestions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
       />
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="text-center p-8">
-        <p className="text-gray-600">Нет доступных вопросов для этого раздела</p>
-      </div>
     );
   }
 
@@ -108,9 +65,9 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardContent className="px-8 py-8">
           <QuestionDisplay
-            question={questions[currentQuestion]}
+            question={mockQuestions[currentQuestion]}
             currentQuestion={currentQuestion}
-            totalQuestions={questions.length}
+            totalQuestions={mockQuestions.length}
             selectedAnswer={selectedAnswer}
             onAnswerSelect={handleAnswerSelect}
             onComplete={handleEarlyCompletion}
