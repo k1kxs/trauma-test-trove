@@ -1,24 +1,5 @@
 import { QuestionData } from "@/types/questions.types";
 
-const SECTIONS = [
-  'forearm',
-  'hip',
-  'humerus',
-  'lungs',
-  'pelvis',
-  'arms',
-  'brush',
-  'foot',
-  'ribs',
-  'shin',
-  'spine'
-];
-
-const getRandomQuestionNumber = () => {
-  // Each section has up to 3 questions (Q1, Q2, Q3)
-  return `Q${Math.floor(Math.random() * 3) + 1}`;
-};
-
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
     const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
@@ -34,13 +15,17 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
       throw new Error('Invalid question file format');
     }
 
+    // File structure:
+    // Line 1-4: Options
+    // Line 5: Correct answer (A, B, C, or D)
+    
     return {
       id: `${section}-${questionId}`,
       section,
       question: "", // Empty string since we don't need question text
       options: lines.slice(0, 4),
       correctAnswer: lines[4].trim(),
-      image: `/tests/${section}/${questionId}/image.png`
+      image: `/tests/${section}/${questionId}/image.png` // Use actual image path from the question folder
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
@@ -49,27 +34,9 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 };
 
 export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
-  if (section === 'comprehensive') {
-    // For comprehensive test, get one random question from each section
-    const questions: QuestionData[] = [];
-    
-    for (const currentSection of SECTIONS) {
-      try {
-        const questionId = getRandomQuestionNumber();
-        const question = await parseQuestionFile(currentSection, questionId);
-        questions.push(question);
-      } catch (error) {
-        console.error(`Failed to load question from section ${currentSection}`);
-        // Continue with other sections even if one fails
-        continue;
-      }
-    }
-    
-    return questions;
-  }
-  
-  // Regular section-specific test loading (keeping existing functionality)
   const questions: QuestionData[] = [];
+  
+  // We know there are exactly 3 questions per section
   for (let i = 1; i <= 3; i++) {
     try {
       const questionId = `Q${i}`;
