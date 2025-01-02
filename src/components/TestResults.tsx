@@ -2,19 +2,13 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
+import { QuestionData } from "@/types/questions.types";
 
 interface TestResultsProps {
   correctAnswers: number;
   totalQuestions: number;
   onComplete: () => void;
-  questions: Array<{
-    id: number;
-    question: string;
-    options: string[];
-    correctAnswer: number;
-    userAnswer?: number;
-    image: string;
-  }>;
+  questions: Array<QuestionData & { userAnswer?: string }>;
 }
 
 const TestResults = ({ 

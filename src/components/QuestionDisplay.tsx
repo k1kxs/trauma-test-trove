@@ -1,20 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
-interface Question {
-  id: number;
-  image: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-}
+import { QuestionData } from "@/types/questions.types";
 
 interface QuestionDisplayProps {
-  question: Question;
+  question: QuestionData;
   currentQuestion: number;
   totalQuestions: number;
-  selectedAnswer: number | null;
-  onAnswerSelect: (index: number) => void;
+  selectedAnswer: string | null;
+  onAnswerSelect: (answer: string) => void;
   onComplete: () => void;
 }
 
@@ -27,6 +20,7 @@ const QuestionDisplay = ({
   onComplete
 }: QuestionDisplayProps) => {
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  const answerLetters = ['A', 'B', 'C', 'D'];
 
   return (
     <div className="space-y-6">
@@ -49,9 +43,9 @@ const QuestionDisplay = ({
         {question.options.map((option, index) => (
           <Button
             key={index}
-            onClick={() => onAnswerSelect(index)}
-            variant={selectedAnswer === index ? 
-              (index === question.correctAnswer ? "default" : "destructive") 
+            onClick={() => onAnswerSelect(answerLetters[index])}
+            variant={selectedAnswer === answerLetters[index] ? 
+              (answerLetters[index] === question.correctAnswer ? "default" : "destructive") 
               : "outline"
             }
             className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
@@ -59,8 +53,8 @@ const QuestionDisplay = ({
                 'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
                 ''
               }
-              ${selectedAnswer === index ? 
-                (index === question.correctAnswer ? 
+              ${selectedAnswer === answerLetters[index] ? 
+                (answerLetters[index] === question.correctAnswer ? 
                   'bg-green-500 hover:bg-green-600 text-white border-none' : 
                   'bg-red-500 hover:bg-red-600 text-white border-none'
                 ) : 

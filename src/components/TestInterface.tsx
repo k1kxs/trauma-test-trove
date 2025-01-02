@@ -4,33 +4,40 @@ import { Card, CardContent } from "@/components/ui/card";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
-import { mockQuestions } from "@/data/mockQuestions";
-import { Button } from "./ui/button";
+import { QuestionData } from "@/types/questions.types";
+import { loadQuestions } from "@/utils/questionLoader";
+import { useQuery } from "@tanstack/react-query";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
-  const filteredQuestions = section 
-    ? mockQuestions.filter(q => q.section === section)
-    : mockQuestions;
-
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
+  const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
 
-  const handleAnswerSelect = (answerIndex: number) => {
+  const { data: questions = [], isLoading } = useQuery({
+    queryKey: ['questions', section],
+    queryFn: () => loadQuestions(section || ''),
+    enabled: !!section
+  });
+
+  if (isLoading) {
+    return <div>Loading questions...</div>;
+  }
+
+  const handleAnswerSelect = (answerIndex: string) => {
     setSelectedAnswer(answerIndex);
     setUserAnswers(prev => ({
       ...prev,
-      [currentQuestion]: answerIndex
+      [questions[currentQuestion].id]: answerIndex
     }));
     
-    if (answerIndex === filteredQuestions[currentQuestion].correctAnswer) {
+    if (answerIndex === questions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
     
     setTimeout(() => {
-      if (currentQuestion < filteredQuestions.length - 1) {
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
       } else {
@@ -44,15 +51,15 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   };
 
   if (showResult) {
-    const questionsWithUserAnswers = filteredQuestions.map(q => ({
+    const questionsWithUserAnswers = questions.map(q => ({
       ...q,
-      userAnswer: userAnswers[filteredQuestions.indexOf(q)]
+      userAnswer: userAnswers[q.id]
     }));
 
     return (
       <TestResults
         correctAnswers={correctAnswers}
-        totalQuestions={filteredQuestions.length}
+        totalQuestions={questions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
       />
@@ -69,9 +76,9 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardContent className="px-8 py-8">
           <QuestionDisplay
-            question={filteredQuestions[currentQuestion]}
+            question={questions[currentQuestion]}
             currentQuestion={currentQuestion}
-            totalQuestions={filteredQuestions.length}
+            totalQuestions={questions.length}
             selectedAnswer={selectedAnswer}
             onAnswerSelect={handleAnswerSelect}
             onComplete={handleEarlyCompletion}
