@@ -16,17 +16,19 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     }
 
     // File structure:
-    // Line 1-4: Options
-    // Line 5: Correct answer (A, B, C, or D)
-    const imageId = `photo-${section}-${questionId}`.toLowerCase();
+    // Line 1: Question text
+    // Line 2-5: Options
+    // Line 6: Correct answer (A, B, C, or D)
+    
+    // Generate a unique image URL for each question
     const imageUrl = `https://images.unsplash.com/photo-1581595219254-3af40244cd7c`;
 
     return {
       id: `${section}-${questionId}`,
       section,
       question: lines[0],
-      options: lines.slice(0, 4),
-      correctAnswer: lines[4].trim(),
+      options: lines.slice(1, 5),
+      correctAnswer: lines[5].trim(),
       image: imageUrl
     };
   } catch (error) {
