@@ -3,4 +3,4 @@
 Вариант 3
 Вариант 4
 A
-https://images.unsplash.com/photo-1581595219254-3af40244cd7a
+/tests/spine/Q1/image.png
