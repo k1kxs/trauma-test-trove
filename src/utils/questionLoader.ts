@@ -31,16 +31,17 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
   const questions: QuestionData[] = [];
   let questionNumber = 1;
+  let hasMoreQuestions = true;
   
-  while (true) {
+  while (hasMoreQuestions) {
     try {
       const questionId = `Q${questionNumber}`;
       const question = await parseQuestionFile(section, questionId);
       questions.push(question);
       questionNumber++;
     } catch (error) {
-      // Если вопрос не найден, прекращаем загрузку
-      break;
+      // Если получили 404 ошибку, значит вопросов больше нет
+      hasMoreQuestions = false;
     }
   }
 
