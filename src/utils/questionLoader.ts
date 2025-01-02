@@ -7,7 +7,7 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     
     const lines = content.split('\n').filter(line => line.trim());
     
-    if (lines.length < 5) {
+    if (lines.length < 6) {
       throw new Error('Invalid question file format');
     }
 
@@ -15,7 +15,7 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
       id: `${section}-${questionId}`,
       section,
       question: `Question ${questionId}`, // Temporary placeholder
-      image: `/tests/${section}/${questionId}/image.png`,
+      image: lines[5], // Get image URL from the sixth line
       options: lines.slice(0, 4),
       correctAnswer: lines[4]
     };
@@ -32,7 +32,7 @@ export const loadQuestions = async (section: string): Promise<QuestionData[]> =>
       id: "arms-Q1",
       section: "arms",
       question: "Question 1",
-      image: "/placeholder.svg", // Using placeholder image
+      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
       options: ["Humerus", "Femur", "Tibia", "Radius"],
       correctAnswer: "A"
     },
@@ -40,7 +40,7 @@ export const loadQuestions = async (section: string): Promise<QuestionData[]> =>
       id: "arms-Q2",
       section: "arms",
       question: "Question 2",
-      image: "/placeholder.svg", // Using placeholder image
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
       options: ["Biceps", "Triceps", "Deltoid", "Trapezius"],
       correctAnswer: "A"
     }
