@@ -26,6 +26,14 @@ const QuestionDisplay = ({
   onAnswerSelect,
   onComplete
 }: QuestionDisplayProps) => {
+  if (!question) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
 
   return (
