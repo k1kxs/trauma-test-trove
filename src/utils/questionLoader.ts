@@ -1,5 +1,19 @@
 import { QuestionData } from "@/types/questions.types";
 
+const sections = [
+  "arms",
+  "brush",
+  "forearm",
+  "hip",
+  "humerus",
+  "lungs",
+  "pelvis",
+  "ribs",
+  "shin",
+  "spine",
+  "foot"
+];
+
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
     const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
@@ -15,17 +29,13 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
       throw new Error('Invalid question file format');
     }
 
-    // File structure:
-    // Line 1-4: Options
-    // Line 5: Correct answer (A, B, C, or D)
-    
     return {
       id: `${section}-${questionId}`,
       section,
       question: "", // Empty string since we don't need question text
       options: lines.slice(0, 4),
       correctAnswer: lines[4].trim(),
-      image: `/tests/${section}/${questionId}/image.png` // Use actual image path from the question folder
+      image: `/tests/${section}/${questionId}/image.png`
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
@@ -33,10 +43,38 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
   }
 };
 
-export const loadQuestions = async (section: string): Promise<QuestionData[]> => {
-  const questions: QuestionData[] = [];
+const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
+  // В каждом разделе по 3 вопроса (Q1, Q2, Q3)
+  const questionIds = ['Q1', 'Q2', 'Q3'];
+  const randomIndex = Math.floor(Math.random() * questionIds.length);
+  const questionId = questionIds[randomIndex];
   
-  // We know there are exactly 3 questions per section
+  try {
+    return await parseQuestionFile(section, questionId);
+  } catch (error) {
+    console.error(`Failed to load question from section ${section}`);
+    return null;
+  }
+};
+
+export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
+  // Если section равен null, значит это тест по всем разделам
+  if (section === null) {
+    const allQuestions: QuestionData[] = [];
+    
+    // Загружаем по одному случайному вопросу из каждого раздела
+    for (const currentSection of sections) {
+      const question = await getRandomQuestionFromSection(currentSection);
+      if (question) {
+        allQuestions.push(question);
+      }
+    }
+    
+    return allQuestions;
+  }
+  
+  // Если выбран конкретный раздел, загружаем все вопросы из него
+  const questions: QuestionData[] = [];
   for (let i = 1; i <= 3; i++) {
     try {
       const questionId = `Q${i}`;
@@ -47,6 +85,6 @@ export const loadQuestions = async (section: string): Promise<QuestionData[]> =>
       break;
     }
   }
-
+  
   return questions;
 };
