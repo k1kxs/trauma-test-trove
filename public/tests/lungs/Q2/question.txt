@@ -1,6 +1,5 @@
-Which structure carries air from the throat to the lungs? - вопрос
-Trachea - A ответ
-Esophagus - B ответ
-Bronchi - C ответ
-Alveoli - D ответ
-A - вариант правильного ответа
+Trachea
+Esophagus
+Bronchi
+Alveoli
+A
