@@ -3,3 +3,4 @@ Esophagus
 Bronchi
 Alveoli
 A
+/tests/lungs/Q2/image.png

@@ -3,3 +3,4 @@ Blood pumping
 Food digestion
 Waste filtration
 A
+/tests/lungs/Q1/image.png
