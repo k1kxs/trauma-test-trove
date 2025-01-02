@@ -11,8 +11,15 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const [showSections, setShowSections] = useState(false);
   
   const sections = [
-    { id: "arms", name: "Верхние конечности" },
-    { id: "lungs", name: "Лёгкие" }
+    "Плечо",
+    "Предплечье",
+    "Кисть",
+    "Рёбра",
+    "Позвоночник",
+    "Таз",
+    "Бедро",
+    "Голень",
+    "Стопа"
   ];
 
   const handleAllSectionsClick = () => {
@@ -85,13 +92,13 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               className="space-y-2"
             >
               {sections.map((section) => (
-                <motion.div key={section.id} variants={item}>
+                <motion.div key={section} variants={item}>
                   <Button
-                    onClick={() => onSectionSelect(section.id)}
+                    onClick={() => onSectionSelect(section)}
                     variant="outline"
                     className="w-full min-h-[3rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium px-3 py-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300 text-sm"
                   >
-                    {section.name}
+                    {section}
                   </Button>
                 </motion.div>
               ))}
