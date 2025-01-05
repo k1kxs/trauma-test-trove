@@ -59,7 +59,7 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
           allQuestions.push(question);
         }
       } catch (error) {
-        console.error(`Failed to load question from section ${currentSection}`);
+        console.log(`No questions found in section ${currentSection}`);
         continue;
       }
     }
@@ -69,17 +69,27 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   
   const questions: QuestionData[] = [];
   let questionNumber = 1;
+  let maxAttempts = 10; // Максимальное количество попыток загрузки
+  let attempts = 0;
   
-  while (true) {
+  while (attempts < maxAttempts) {
     try {
       const questionId = `Q${questionNumber}`;
       const question = await parseQuestionFile(section, questionId);
       questions.push(question);
       questionNumber++;
+      attempts++;
     } catch (error) {
-      // If we get an error (404), we've reached the end of available questions
+      // Если получаем ошибку 404, значит вопросов больше нет
+      console.log(`No more questions found in section ${section} after Q${questionNumber - 1}`);
       break;
     }
+  }
+  
+  if (questions.length === 0) {
+    console.log(`No questions found in section ${section}`);
+  } else {
+    console.log(`Loaded ${questions.length} questions from section ${section}`);
   }
   
   return questions;
