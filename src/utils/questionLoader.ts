@@ -3,6 +3,12 @@ import { QuestionData } from "@/types/questions.types";
 // Кэш для хранения результатов проверки существования файлов
 const fileExistsCache = new Map<string, boolean>();
 
+// Кэш для хранения загруженных вопросов
+const questionCache = new Map<string, QuestionData>();
+
+// Кэш для хранения папок с вопросами
+const questionFoldersCache = new Map<string, string[]>();
+
 // Оптимизированная функция проверки существования файла с кэшированием
 const fileExists = async (path: string): Promise<boolean> => {
   if (fileExistsCache.has(path)) {
@@ -20,9 +26,6 @@ const fileExists = async (path: string): Promise<boolean> => {
   }
 };
 
-// Кэш для хранения папок с вопросами
-const questionFoldersCache = new Map<string, string[]>();
-
 // Оптимизированная функция получения списка папок с вопросами
 const getQuestionFolders = async (section: string): Promise<string[]> => {
   if (questionFoldersCache.has(section)) {
@@ -37,7 +40,7 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
     const exists = await fileExists(folderPath);
     
     if (!exists) {
-      break; // Прекращаем поиск, если не нашли следующий вопрос
+      break;
     }
     
     folders.push(`Q${questionNumber}`);
@@ -49,9 +52,7 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   return folders;
 };
 
-// Кэш для хранения загруженных вопросов
-const questionCache = new Map<string, QuestionData>();
-
+// Оптимизированная функция парсинга файла вопроса с кэшированием
 const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   const cacheKey = `${section}-${questionId}`;
   
@@ -108,7 +109,6 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   console.log('Loading questions for section:', section);
   
   if (!section) {
-    // Если секция не выбрана, загружаем по одному случайному вопросу из каждой секции
     const sections = [
       "arms", "brush", "forearm", "hip", "humerus", "lungs", 
       "pelvis", "ribs", "shin", "spine", "foot"
@@ -128,7 +128,6 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
     return allQuestions;
   }
   
-  // Загружаем все вопросы из выбранной секции
   const folders = await getQuestionFolders(section);
   console.log(`Loading ${folders.length} questions from section ${section}`);
   
