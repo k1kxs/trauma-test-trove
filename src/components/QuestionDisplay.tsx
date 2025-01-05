@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
+import { useState } from "react";
+import { ZoomIn } from "lucide-react";
 
 interface QuestionDisplayProps {
   question: QuestionData;
@@ -19,6 +22,9 @@ const QuestionDisplay = ({
   onAnswerSelect,
   onComplete
 }: QuestionDisplayProps) => {
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [scale, setScale] = useState(1);
+
   if (!question) {
     return <div>Loading question...</div>;
   }
@@ -26,22 +32,49 @@ const QuestionDisplay = ({
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
   const answerLetters = ['A', 'B', 'C', 'D'];
 
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY * -0.01;
+    const newScale = Math.min(Math.max(0.5, scale + delta), 3);
+    setScale(newScale);
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
-      <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
+      <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner group cursor-zoom-in"
+           onClick={() => setIsImageOpen(true)}>
         <div className="absolute top-3 right-3 bg-black/40 text-white px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-[2px]">
           {currentQuestion + 1}/{totalQuestions}
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 transition-opacity">
+          <ZoomIn className="w-8 h-8 text-gray-700" />
         </div>
         <img
           src={question.image || "/placeholder.svg"}
           alt="Question image"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain transition-transform group-hover:scale-105"
         />
       </div>
+
+      <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
+          <div className="relative w-full h-[90vh] flex items-center justify-center">
+            <img
+              src={question.image || "/placeholder.svg"}
+              alt="Question image"
+              className="max-w-full max-h-full object-contain transition-transform cursor-zoom-in"
+              style={{ transform: `scale(${scale})` }}
+            />
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
+              Используйте колесико мыши для масштабирования
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid gap-3">
         {question.options.map((option, index) => (
