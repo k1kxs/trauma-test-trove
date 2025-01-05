@@ -78,7 +78,6 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
       questionNumber++;
     } catch (error) {
       // If we get an error (404), we've reached the end of available questions
-      console.error(`Failed to load ${section}/Q${questionNumber}`);
       break;
     }
   }
