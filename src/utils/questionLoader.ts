@@ -26,7 +26,6 @@ const shuffleArray = <T>(array: T[]): T[] => {
 
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
-    console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
     const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
     
     if (!response.ok) {
@@ -34,7 +33,12 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     }
     
     const content = await response.text();
-    console.log(`Question content for ${section}/${questionId}:`, content);
+    
+    // Проверяем, что контент не является HTML-документом
+    if (content.includes('<!DOCTYPE html>')) {
+      throw new Error('Invalid question file format');
+    }
+    
     const lines = content.trim().split('\n').filter(line => line.trim());
     
     if (lines.length < 4) {
@@ -59,7 +63,8 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 const checkQuestionExists = async (section: string, questionNumber: number): Promise<boolean> => {
   try {
     const response = await fetch(`/tests/${section}/Q${questionNumber}/question.txt`);
-    return response.ok;
+    const content = await response.text();
+    return response.ok && !content.includes('<!DOCTYPE html>');
   } catch {
     return false;
   }
@@ -107,6 +112,10 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   
   // Загружаем все вопросы из конкретной секции
   const questionCount = await countQuestionsInSection(section);
+  if (questionCount === 0) {
+    return [];
+  }
+  
   const questions: QuestionData[] = [];
   
   // Создаем массив номеров вопросов
