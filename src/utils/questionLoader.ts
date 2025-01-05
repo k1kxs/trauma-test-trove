@@ -14,41 +14,61 @@ const sections = [
   "foot"
 ];
 
-// Функция для проверки существования файла
+// Кэш для хранения результатов проверки существования файлов
+const fileExistsCache = new Map<string, boolean>();
+
+// Оптимизированная функция проверки существования файла с кэшированием
 const fileExists = async (path: string): Promise<boolean> => {
+  if (fileExistsCache.has(path)) {
+    return fileExistsCache.get(path)!;
+  }
+
   try {
     const response = await fetch(path, { method: 'HEAD' });
-    return response.ok;
+    const exists = response.ok;
+    fileExistsCache.set(path, exists);
+    return exists;
   } catch {
+    fileExistsCache.set(path, false);
     return false;
   }
 };
 
-// Функция для получения списка всех папок с вопросами в разделе
+// Кэш для хранения папок с вопросами
+const questionFoldersCache = new Map<string, string[]>();
+
+// Оптимизированная функция получения списка папок с вопросами
 const getQuestionFolders = async (section: string): Promise<string[]> => {
-  const folders: string[] = [];
-  let i = 1;
-  
-  while (true) {
-    const folderPath = `/tests/${section}/Q${i}/question.txt`;
-    const exists = await fileExists(folderPath);
-    
-    if (!exists) {
-      break;
-    }
-    
-    folders.push(`Q${i}`);
-    i++;
+  if (questionFoldersCache.has(section)) {
+    return questionFoldersCache.get(section)!;
   }
+
+  const folders: string[] = [];
+  const maxQuestions = 10; // Ограничиваем количество проверок
   
+  const checkPromises = Array.from({ length: maxQuestions }, (_, i) => {
+    const folderPath = `/tests/${section}/Q${i + 1}/question.txt`;
+    return fileExists(folderPath).then(exists => exists ? `Q${i + 1}` : null);
+  });
+
+  const results = await Promise.all(checkPromises);
+  folders.push(...results.filter((folder): folder is string => folder !== null));
+  
+  questionFoldersCache.set(section, folders);
   return folders;
 };
 
-export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
+// Кэш для хранения загруженных вопросов
+const questionCache = new Map<string, QuestionData>();
+
+const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
+  const cacheKey = `${section}-${questionId}`;
+  
+  if (questionCache.has(cacheKey)) {
+    return questionCache.get(cacheKey)!;
+  }
+
   try {
-    console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
-    
-    // Проверяем наличие необходимых файлов
     const questionPath = `/tests/${section}/${questionId}/question.txt`;
     const imagePath = `/tests/${section}/${questionId}/image.png`;
     
@@ -58,7 +78,6 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     ]);
     
     if (!questionExists) {
-      console.warn(`Question file not found for ${section}/${questionId}`);
       return null;
     }
     
@@ -68,22 +87,23 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     }
     
     const content = await response.text();
-    console.log(`Question content for ${section}/${questionId}:`, content);
     const lines = content.trim().split('\n').filter(line => line.trim());
     
     if (lines.length < 4) {
-      console.warn(`Invalid question format in ${section}/${questionId}`);
       return null;
     }
 
-    return {
-      id: `${section}-${questionId}`,
+    const questionData: QuestionData = {
+      id: cacheKey,
       section,
       question: lines[0],
       options: lines.slice(1, 5),
       correctAnswer: lines[4],
       image: imageExists ? `/tests/${section}/${questionId}/image.png` : "/placeholder.svg"
     };
+
+    questionCache.set(cacheKey, questionData);
+    return questionData;
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
     return null;
@@ -93,7 +113,6 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
   const folders = await getQuestionFolders(section);
   if (folders.length === 0) {
-    console.warn(`No valid questions found in section ${section}`);
     return null;
   }
   
@@ -106,31 +125,20 @@ const getRandomQuestionFromSection = async (section: string): Promise<QuestionDa
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
-  // Если section равен null, значит это тест по всем разделам
   if (section === null) {
     const allQuestions: QuestionData[] = [];
+    const loadPromises = sections.map(currentSection => 
+      getRandomQuestionFromSection(currentSection)
+        .then(question => question && allQuestions.push(question))
+    );
     
-    // Загружаем по одному случайному вопросу из каждого раздела
-    for (const currentSection of sections) {
-      const question = await getRandomQuestionFromSection(currentSection);
-      if (question) {
-        allQuestions.push(question);
-      }
-    }
-    
+    await Promise.all(loadPromises);
     return allQuestions;
   }
   
-  // Если выбран конкретный раздел, загружаем все доступные вопросы
-  const questions: QuestionData[] = [];
   const folders = await getQuestionFolders(section);
+  const loadPromises = folders.map(questionId => parseQuestionFile(section, questionId));
+  const questions = await Promise.all(loadPromises);
   
-  for (const questionId of folders) {
-    const question = await parseQuestionFile(section, questionId);
-    if (question) {
-      questions.push(question);
-    }
-  }
-  
-  return questions;
+  return questions.filter((q): q is QuestionData => q !== null);
 };
