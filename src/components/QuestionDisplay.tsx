@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ZoomIn, X } from "lucide-react";
 
 interface QuestionDisplayProps {
@@ -24,7 +24,10 @@ const QuestionDisplay = ({
 }: QuestionDisplayProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [scale, setScale] = useState(1);
-
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
   if (!question) {
     return <div>Loading question...</div>;
   }
@@ -37,6 +40,34 @@ const QuestionDisplay = ({
     const delta = e.deltaY * -0.01;
     const newScale = Math.min(Math.max(0.5, scale + delta), 3);
     setScale(newScale);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleDialogClose = () => {
+    setIsImageOpen(false);
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
   };
 
   return (
@@ -60,20 +91,33 @@ const QuestionDisplay = ({
         />
       </div>
 
-      <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
-        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
+      <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
+        <DialogContent 
+          className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" 
+          onWheel={handleWheel}
+        >
           <button 
-            onClick={() => setIsImageOpen(false)}
+            onClick={handleDialogClose}
             className="absolute right-4 top-4 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 group z-50"
           >
             <X className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-90" />
           </button>
-          <div className="relative w-full h-[90vh] flex items-center justify-center">
+          <div 
+            className="relative w-full h-[90vh] flex items-center justify-center cursor-move"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <img
               src={question.image || "/placeholder.svg"}
               alt="Question image"
-              className="max-w-full max-h-full object-contain transition-transform cursor-zoom-in"
-              style={{ transform: `scale(${scale})` }}
+              className="max-w-full max-h-full object-contain transition-transform select-none"
+              style={{ 
+                transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+                cursor: isDragging ? 'grabbing' : 'grab'
+              }}
+              draggable={false}
             />
           </div>
         </DialogContent>
