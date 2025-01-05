@@ -14,6 +14,15 @@ const sections = [
   "foot"
 ];
 
+const fileExists = async (url: string): Promise<boolean> => {
+  try {
+    const response = await fetch(url);
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
     console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
@@ -45,6 +54,26 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
   }
 };
 
+// Функция для подсчета количества вопросов в разделе
+const countQuestionsInSection = async (section: string): Promise<number> => {
+  let count = 0;
+  let questionNumber = 1;
+
+  while (await fileExists(`/tests/${section}/Q${questionNumber}/question.txt`)) {
+    count++;
+    questionNumber++;
+  }
+
+  console.log(`Found ${count} questions in section ${section}`);
+  return count;
+};
+
+// Функция для получения случайного массива индексов
+const getRandomIndices = (max: number): number[] => {
+  const indices = Array.from({ length: max }, (_, i) => i + 1);
+  return indices.sort(() => Math.random() - 0.5);
+};
+
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
@@ -53,7 +82,7 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
     
     for (const currentSection of sections) {
       try {
-        // Try to load Q1 from each section
+        // Загружаем только Q1 из каждого раздела для общего теста
         const question = await parseQuestionFile(currentSection, 'Q1');
         if (question) {
           allQuestions.push(question);
@@ -67,19 +96,26 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
     return allQuestions;
   }
   
+  // Подсчитываем количество доступных вопросов в разделе
+  const questionCount = await countQuestionsInSection(section);
+  if (questionCount === 0) {
+    console.error(`No questions found in section ${section}`);
+    return [];
+  }
+
+  // Получаем случайный порядок индексов вопросов
+  const randomIndices = getRandomIndices(questionCount);
   const questions: QuestionData[] = [];
-  let questionNumber = 1;
-  
-  while (true) {
+
+  // Загружаем вопросы в случайном порядке
+  for (const index of randomIndices) {
     try {
-      const questionId = `Q${questionNumber}`;
+      const questionId = `Q${index}`;
       const question = await parseQuestionFile(section, questionId);
       questions.push(question);
-      questionNumber++;
     } catch (error) {
-      // If we get an error (404), we've reached the end of available questions
-      console.error(`Failed to load ${section}/Q${questionNumber}`);
-      break;
+      console.error(`Failed to load ${section}/${index}`);
+      continue;
     }
   }
   
