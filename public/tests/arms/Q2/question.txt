@@ -3,4 +3,3 @@ Triceps
 Deltoid
 Trapezius
 A
-/tests/arms/Q2/image.png

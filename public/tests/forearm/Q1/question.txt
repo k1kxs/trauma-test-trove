@@ -4,4 +4,3 @@
 Плечевая кость
 Ключица
 A
-/tests/forearm/Q1/image.png

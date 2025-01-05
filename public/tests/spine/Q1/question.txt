@@ -4,4 +4,3 @@
 6 позвонков
 5 позвонков
 A
-/tests/spine/Q1/image.png

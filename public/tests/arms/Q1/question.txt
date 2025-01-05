@@ -3,4 +3,3 @@ Femur
 Tibia
 Radius
 A
-/tests/arms/Q1/image.png

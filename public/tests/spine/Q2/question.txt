@@ -3,4 +3,3 @@
 Вариант 3
 Вариант 4
 B
-/tests/spine/Q2/image.png

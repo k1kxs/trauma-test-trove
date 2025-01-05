@@ -4,4 +4,3 @@
 Бронхи
 Альвеолы
 D
-/tests/lungs/Q2/image.png
