@@ -33,11 +33,9 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   }
 
   const folders: string[] = [];
-  let questionExists = true;
-  let i = 1;
+  const maxAttempts = 20; // Максимальное количество попыток
   
-  // Проверяем вопросы последовательно, пока не найдем первый отсутствующий
-  while (questionExists) {
+  for (let i = 1; i <= maxAttempts; i++) {
     const questionPath = `/tests/${section}/Q${i}/question.txt`;
     const imagePath = `/tests/${section}/Q${i}/image.png`;
     
@@ -48,9 +46,8 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
     
     if (qExists && iExists) {
       folders.push(`Q${i}`);
-      i++;
     } else {
-      questionExists = false;
+      break; // Прерываем цикл, если файлы не найдены
     }
   }
   
