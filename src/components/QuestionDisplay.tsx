@@ -3,7 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
 import { useState } from "react";
-import { ZoomIn } from "lucide-react";
+import { ZoomIn, X } from "lucide-react";
 
 interface QuestionDisplayProps {
   question: QuestionData;
@@ -62,6 +62,12 @@ const QuestionDisplay = ({
 
       <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
         <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
+          <button 
+            onClick={() => setIsImageOpen(false)}
+            className="absolute right-4 top-4 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 group z-50"
+          >
+            <X className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-90" />
+          </button>
           <div className="relative w-full h-[90vh] flex items-center justify-center">
             <img
               src={question.image || "/placeholder.svg"}
@@ -69,9 +75,6 @@ const QuestionDisplay = ({
               className="max-w-full max-h-full object-contain transition-transform cursor-zoom-in"
               style={{ transform: `scale(${scale})` }}
             />
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
-              Используйте колесико мыши для масштабирования
-            </div>
           </div>
         </DialogContent>
       </Dialog>
