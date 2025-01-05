@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
+import { QuestionData } from "@/types/questions.types";
 import { loadQuestions } from "@/utils/questionLoader";
 import { useQuery } from "@tanstack/react-query";
 

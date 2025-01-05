@@ -1,110 +1,60 @@
 import { QuestionData } from "@/types/questions.types";
 
-// Кэш для хранения результатов проверки существования файлов
-const fileExistsCache = new Map<string, boolean>();
+const sections = [
+  "arms",
+  "brush",
+  "forearm",
+  "hip",
+  "humerus",
+  "lungs",
+  "pelvis",
+  "ribs",
+  "shin",
+  "spine",
+  "foot"
+];
 
-// Кэш для хранения загруженных вопросов
-const questionCache = new Map<string, QuestionData>();
-
-// Кэш для хранения папок с вопросами
-const questionFoldersCache = new Map<string, string[]>();
-
-// Оптимизированная функция проверки существования файла с кэшированием
-const fileExists = async (path: string): Promise<boolean> => {
-  if (fileExistsCache.has(path)) {
-    return fileExistsCache.get(path)!;
-  }
-
+export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
-    const response = await fetch(path, { method: 'HEAD' });
-    const exists = response.ok;
-    fileExistsCache.set(path, exists);
-    return exists;
-  } catch {
-    fileExistsCache.set(path, false);
-    return false;
-  }
-};
-
-// Оптимизированная функция получения списка папок с вопросами
-const getQuestionFolders = async (section: string): Promise<string[]> => {
-  if (questionFoldersCache.has(section)) {
-    return questionFoldersCache.get(section)!;
-  }
-
-  const folders: string[] = [];
-  const maxAttempts = 20; // Максимальное количество попыток
-  
-  for (let i = 1; i <= maxAttempts; i++) {
-    const questionPath = `/tests/${section}/Q${i}/question.txt`;
-    const imagePath = `/tests/${section}/Q${i}/image.png`;
+    console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
+    const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
     
-    const [qExists, iExists] = await Promise.all([
-      fileExists(questionPath),
-      fileExists(imagePath)
-    ]);
-    
-    if (qExists && iExists) {
-      folders.push(`Q${i}`);
-    } else {
-      break; // Прерываем цикл, если файлы не найдены
-    }
-  }
-  
-  questionFoldersCache.set(section, folders);
-  console.log(`Found ${folders.length} questions in section ${section}:`, folders);
-  return folders;
-};
-
-// Оптимизированная функция парсинга файла вопроса с кэшированием
-const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
-  const cacheKey = `${section}-${questionId}`;
-  
-  if (questionCache.has(cacheKey)) {
-    return questionCache.get(cacheKey)!;
-  }
-
-  try {
-    const questionPath = `/tests/${section}/${questionId}/question.txt`;
-    const imagePath = `/tests/${section}/${questionId}/image.png`;
-    
-    const [questionExists, imageExists] = await Promise.all([
-      fileExists(questionPath),
-      fileExists(imagePath)
-    ]);
-    
-    if (!questionExists || !imageExists) {
-      console.log(`Question or image not found: ${questionPath}`);
-      return null;
-    }
-    
-    const response = await fetch(questionPath);
     if (!response.ok) {
-      console.log(`Failed to fetch question: ${questionPath}`);
-      return null;
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const content = await response.text();
+    console.log(`Question content for ${section}/${questionId}:`, content);
     const lines = content.trim().split('\n').filter(line => line.trim());
     
-    if (lines.length < 2) {
-      console.log(`Invalid question format in ${questionPath}`);
-      return null;
+    if (lines.length < 4) {
+      throw new Error('Invalid question file format');
     }
 
-    const questionData: QuestionData = {
-      id: cacheKey,
+    return {
+      id: `${section}-${questionId}`,
       section,
-      question: lines[0],
-      options: lines.slice(1, -1),
-      correctAnswer: lines[lines.length - 1],
-      image: imagePath
+      question: "", // Empty string since we don't need question text
+      options: lines.slice(0, 4),
+      correctAnswer: lines[4].trim(),
+      image: `/tests/${section}/${questionId}/image.png`
     };
-
-    questionCache.set(cacheKey, questionData);
-    return questionData;
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
+    throw error;
+  }
+};
+
+const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
+  // В каждом разделе по 3 вопроса (Q1, Q2, Q3)
+  const questionIds = ['Q1', 'Q2', 'Q3'];
+  const randomIndex = Math.floor(Math.random() * questionIds.length);
+  const questionId = questionIds[randomIndex];
+  
+  try {
+    return await parseQuestionFile(section, questionId);
+  } catch (error) {
+    console.error(`Failed to load question from section ${section}`);
     return null;
   }
 };
@@ -112,36 +62,33 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
-  if (!section) {
-    const sections = [
-      "arms", "brush", "forearm", "hip", "humerus", "lungs", 
-      "pelvis", "ribs", "shin", "spine", "foot"
-    ];
-    
+  // Если section равен null, значит это тест по всем разделам
+  if (section === null) {
     const allQuestions: QuestionData[] = [];
-    const loadPromises = sections.map(async currentSection => {
-      const folders = await getQuestionFolders(currentSection);
-      if (folders.length > 0) {
-        const randomIndex = Math.floor(Math.random() * folders.length);
-        const question = await parseQuestionFile(currentSection, folders[randomIndex]);
-        if (question) allQuestions.push(question);
-      }
-    });
     
-    await Promise.all(loadPromises);
+    // Загружаем по одному случайному вопросу из каждого раздела
+    for (const currentSection of sections) {
+      const question = await getRandomQuestionFromSection(currentSection);
+      if (question) {
+        allQuestions.push(question);
+      }
+    }
+    
     return allQuestions;
   }
   
-  const folders = await getQuestionFolders(section);
-  console.log(`Loading ${folders.length} questions from section ${section}`);
-  
-  if (folders.length === 0) {
-    console.log(`No questions found in section ${section}`);
-    return [];
+  // Если выбран конкретный раздел, загружаем все вопросы из него
+  const questions: QuestionData[] = [];
+  for (let i = 1; i <= 3; i++) {
+    try {
+      const questionId = `Q${i}`;
+      const question = await parseQuestionFile(section, questionId);
+      questions.push(question);
+    } catch (error) {
+      console.error(`Failed to load Q${i} from section ${section}`);
+      break;
+    }
   }
   
-  const loadPromises = folders.map(questionId => parseQuestionFile(section, questionId));
-  const questions = await Promise.all(loadPromises);
-  
-  return questions.filter((q): q is QuestionData => q !== null);
+  return questions;
 };
