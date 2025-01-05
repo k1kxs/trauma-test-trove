@@ -61,7 +61,7 @@ const QuestionDisplay = ({
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
-        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel} hideCloseButton>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
           <Button
             variant="ghost"
             size="icon"
@@ -78,9 +78,6 @@ const QuestionDisplay = ({
               className="max-w-full max-h-full object-contain transition-transform cursor-zoom-in"
               style={{ transform: `scale(${scale})` }}
             />
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
-              Используйте колесико мыши для масштабирования
-            </div>
           </div>
         </DialogContent>
       </Dialog>
