@@ -61,7 +61,7 @@ const QuestionDisplay = ({
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
-        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
+        <DialogContent className="p-0 overflow-hidden bg-black/95 w-auto h-auto max-w-[95vw] max-h-[95vh]" onWheel={handleWheel}>
           <Button
             variant="ghost"
             size="icon"
@@ -71,11 +71,11 @@ const QuestionDisplay = ({
             <X className="h-4 w-4" />
             <span className="sr-only">Закрыть</span>
           </Button>
-          <div className="relative w-full h-[90vh] flex items-center justify-center">
+          <div className="relative flex items-center justify-center">
             <img
               src={question.image || "/placeholder.svg"}
               alt="Question image"
-              className="max-w-full max-h-full object-contain transition-transform cursor-zoom-in"
+              className="max-w-full max-h-[95vh] object-contain transition-transform cursor-zoom-in"
               style={{ transform: `scale(${scale})` }}
             />
           </div>
