@@ -63,8 +63,11 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 const checkQuestionExists = async (section: string, questionNumber: number): Promise<boolean> => {
   try {
     const response = await fetch(`/tests/${section}/Q${questionNumber}/question.txt`);
+    if (!response.ok) {
+      return false;
+    }
     const content = await response.text();
-    return response.ok && !content.includes('<!DOCTYPE html>');
+    return !content.includes('<!DOCTYPE html>');
   } catch {
     return false;
   }
@@ -113,23 +116,21 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   // Загружаем все вопросы из конкретной секции
   const questionCount = await countQuestionsInSection(section);
   if (questionCount === 0) {
+    console.log(`No questions found in section ${section}`);
     return [];
   }
   
   const questions: QuestionData[] = [];
-  
-  // Создаем массив номеров вопросов
   const questionNumbers = Array.from({ length: questionCount }, (_, i) => i + 1);
-  // Перемешиваем номера вопросов
   const shuffledNumbers = shuffleArray(questionNumbers);
   
-  // Загружаем вопросы в случайном порядке
   for (const number of shuffledNumbers) {
     try {
       const question = await parseQuestionFile(section, `Q${number}`);
       questions.push(question);
     } catch (error) {
       console.error(`Failed to load question Q${number} from section ${section}`);
+      continue; // Пропускаем вопрос, если его не удалось загрузить
     }
   }
   
