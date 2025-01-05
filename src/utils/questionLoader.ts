@@ -1,19 +1,5 @@
 import { QuestionData } from "@/types/questions.types";
 
-const sections = [
-  "arms",
-  "brush",
-  "forearm",
-  "hip",
-  "humerus",
-  "lungs",
-  "pelvis",
-  "ribs",
-  "shin",
-  "spine",
-  "foot"
-];
-
 // Кэш для хранения результатов проверки существования файлов
 const fileExistsCache = new Map<string, boolean>();
 
@@ -44,17 +30,22 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   }
 
   const folders: string[] = [];
-  const maxQuestions = 10; // Ограничиваем количество проверок
+  let questionNumber = 1;
   
-  const checkPromises = Array.from({ length: maxQuestions }, (_, i) => {
-    const folderPath = `/tests/${section}/Q${i + 1}/question.txt`;
-    return fileExists(folderPath).then(exists => exists ? `Q${i + 1}` : null);
-  });
-
-  const results = await Promise.all(checkPromises);
-  folders.push(...results.filter((folder): folder is string => folder !== null));
+  while (true) {
+    const folderPath = `/tests/${section}/Q${questionNumber}/question.txt`;
+    const exists = await fileExists(folderPath);
+    
+    if (!exists) {
+      break; // Прекращаем поиск, если не нашли следующий вопрос
+    }
+    
+    folders.push(`Q${questionNumber}`);
+    questionNumber++;
+  }
   
   questionFoldersCache.set(section, folders);
+  console.log(`Found ${folders.length} questions in section ${section}:`, folders);
   return folders;
 };
 
@@ -78,18 +69,21 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
     ]);
     
     if (!questionExists) {
+      console.log(`Question file not found: ${questionPath}`);
       return null;
     }
     
     const response = await fetch(questionPath);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.log(`Failed to fetch question: ${questionPath}`);
+      return null;
     }
     
     const content = await response.text();
     const lines = content.trim().split('\n').filter(line => line.trim());
     
     if (lines.length < 4) {
+      console.log(`Invalid question format in ${questionPath}`);
       return null;
     }
 
@@ -110,33 +104,34 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
   }
 };
 
-const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
-  const folders = await getQuestionFolders(section);
-  if (folders.length === 0) {
-    return null;
-  }
-  
-  const randomIndex = Math.floor(Math.random() * folders.length);
-  const questionId = folders[randomIndex];
-  
-  return await parseQuestionFile(section, questionId);
-};
-
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
-  if (section === null) {
+  if (!section) {
+    // Если секция не выбрана, загружаем по одному случайному вопросу из каждой секции
+    const sections = [
+      "arms", "brush", "forearm", "hip", "humerus", "lungs", 
+      "pelvis", "ribs", "shin", "spine", "foot"
+    ];
+    
     const allQuestions: QuestionData[] = [];
-    const loadPromises = sections.map(currentSection => 
-      getRandomQuestionFromSection(currentSection)
-        .then(question => question && allQuestions.push(question))
-    );
+    const loadPromises = sections.map(async currentSection => {
+      const folders = await getQuestionFolders(currentSection);
+      if (folders.length > 0) {
+        const randomIndex = Math.floor(Math.random() * folders.length);
+        const question = await parseQuestionFile(currentSection, folders[randomIndex]);
+        if (question) allQuestions.push(question);
+      }
+    });
     
     await Promise.all(loadPromises);
     return allQuestions;
   }
   
+  // Загружаем все вопросы из выбранной секции
   const folders = await getQuestionFolders(section);
+  console.log(`Loading ${folders.length} questions from section ${section}`);
+  
   const loadPromises = folders.map(questionId => parseQuestionFile(section, questionId));
   const questions = await Promise.all(loadPromises);
   
