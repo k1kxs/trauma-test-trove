@@ -56,23 +56,19 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 
 // Функция для подсчета количества вопросов в разделе
 const countQuestionsInSection = async (section: string): Promise<number> => {
-  let count = 1;
-  while (true) {
-    try {
-      const response = await fetch(`/tests/${section}/Q${count}/question.txt`);
-      if (!response.ok) {
-        break;
-      }
-      count++;
-    } catch {
+  let count = 0;
+  
+  // Проверяем существование каждой папки Q{n}, пока не найдем первую отсутствующую
+  for (let i = 1; i <= 100; i++) { // Ограничиваем максимум в 100 вопросов для безопасности
+    const exists = await fileExists(`/tests/${section}/Q${i}/question.txt`);
+    if (!exists) {
       break;
     }
+    count = i;
   }
   
-  // Вычитаем 1, так как последняя проверка была неуспешной
-  const finalCount = count - 1;
-  console.log(`Found ${finalCount} questions in section ${section}`);
-  return finalCount;
+  console.log(`Found ${count} questions in section ${section}`);
+  return count;
 };
 
 // Функция для получения случайного массива индексов
