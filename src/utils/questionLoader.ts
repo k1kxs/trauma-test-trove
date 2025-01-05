@@ -36,10 +36,15 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   let questionNumber = 1;
   
   while (true) {
-    const folderPath = `/tests/${section}/Q${questionNumber}/question.txt`;
-    const exists = await fileExists(folderPath);
+    const questionPath = `/tests/${section}/Q${questionNumber}/question.txt`;
+    const imagePath = `/tests/${section}/Q${questionNumber}/image.png`;
     
-    if (!exists) {
+    const [questionExists, imageExists] = await Promise.all([
+      fileExists(questionPath),
+      fileExists(imagePath)
+    ]);
+    
+    if (!questionExists && !imageExists) {
       break;
     }
     
@@ -83,7 +88,7 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
     const content = await response.text();
     const lines = content.trim().split('\n').filter(line => line.trim());
     
-    if (lines.length < 4) {
+    if (lines.length < 2) {
       console.log(`Invalid question format in ${questionPath}`);
       return null;
     }
@@ -92,9 +97,9 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
       id: cacheKey,
       section,
       question: lines[0],
-      options: lines.slice(1, 5),
-      correctAnswer: lines[4],
-      image: imageExists ? `/tests/${section}/${questionId}/image.png` : "/placeholder.svg"
+      options: lines.slice(1, -1),
+      correctAnswer: lines[lines.length - 1],
+      image: imageExists ? imagePath : "/placeholder.svg"
     };
 
     questionCache.set(cacheKey, questionData);
