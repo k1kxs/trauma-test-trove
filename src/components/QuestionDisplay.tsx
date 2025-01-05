@@ -112,10 +112,11 @@ const QuestionDisplay = ({
             <img
               src={question.image || "/placeholder.svg"}
               alt="Question image"
-              className="max-w-full max-h-full object-contain transition-transform select-none"
+              className="w-full h-full object-cover transition-transform select-none"
               style={{ 
                 transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-                cursor: isDragging ? 'grabbing' : 'grab'
+                cursor: isDragging ? 'grabbing' : 'grab',
+                objectFit: scale <= 1 ? 'contain' : 'cover'
               }}
               draggable={false}
             />
