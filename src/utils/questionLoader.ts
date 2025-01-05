@@ -33,23 +33,17 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   }
 
   const folders: string[] = [];
-  let questionNumber = 1;
+  const maxQuestions = 100; // Ограничиваем максимальное количество вопросов
   
-  while (true) {
-    const questionPath = `/tests/${section}/Q${questionNumber}/question.txt`;
-    const imagePath = `/tests/${section}/Q${questionNumber}/image.png`;
+  for (let i = 1; i <= maxQuestions; i++) {
+    const questionPath = `/tests/${section}/Q${i}/question.txt`;
+    const exists = await fileExists(questionPath);
     
-    const [questionExists, imageExists] = await Promise.all([
-      fileExists(questionPath),
-      fileExists(imagePath)
-    ]);
-    
-    if (!questionExists && !imageExists) {
+    if (!exists) {
       break;
     }
     
-    folders.push(`Q${questionNumber}`);
-    questionNumber++;
+    folders.push(`Q${i}`);
   }
   
   questionFoldersCache.set(section, folders);
