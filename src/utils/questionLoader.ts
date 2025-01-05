@@ -14,6 +14,16 @@ const sections = [
   "foot"
 ];
 
+// Функция для перемешивания массива (алгоритм Фишера-Йейтса)
+const shuffleArray = <T>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
     console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
@@ -45,17 +55,45 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
   }
 };
 
+// Функция для проверки существования вопроса
+const checkQuestionExists = async (section: string, questionNumber: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`/tests/${section}/Q${questionNumber}/question.txt`);
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
+// Функция для подсчета количества вопросов в секции
+const countQuestionsInSection = async (section: string): Promise<number> => {
+  let count = 0;
+  const MAX_QUESTIONS = 20; // Максимальное количество вопросов для проверки
+
+  for (let i = 1; i <= MAX_QUESTIONS; i++) {
+    const exists = await checkQuestionExists(section, i);
+    if (!exists) break;
+    count++;
+  }
+
+  console.log(`Found ${count} questions in section ${section}`);
+  return count;
+};
+
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
   if (section === null) {
+    // Загружаем по одному случайному вопросу из каждой секции
     const allQuestions: QuestionData[] = [];
     
     for (const currentSection of sections) {
       try {
-        // Try to load Q1 from each section
-        const question = await parseQuestionFile(currentSection, 'Q1');
-        if (question) {
+        const questionCount = await countQuestionsInSection(currentSection);
+        if (questionCount > 0) {
+          // Выбираем случайный номер вопроса из доступных
+          const randomQuestionNumber = Math.floor(Math.random() * questionCount) + 1;
+          const question = await parseQuestionFile(currentSection, `Q${randomQuestionNumber}`);
           allQuestions.push(question);
         }
       } catch (error) {
@@ -64,33 +102,28 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
       }
     }
     
-    return allQuestions;
+    return shuffleArray(allQuestions);
   }
   
+  // Загружаем все вопросы из конкретной секции
+  const questionCount = await countQuestionsInSection(section);
   const questions: QuestionData[] = [];
-  let questionNumber = 1;
-  let maxAttempts = 10; // Максимальное количество попыток загрузки
-  let attempts = 0;
   
-  while (attempts < maxAttempts) {
+  // Создаем массив номеров вопросов
+  const questionNumbers = Array.from({ length: questionCount }, (_, i) => i + 1);
+  // Перемешиваем номера вопросов
+  const shuffledNumbers = shuffleArray(questionNumbers);
+  
+  // Загружаем вопросы в случайном порядке
+  for (const number of shuffledNumbers) {
     try {
-      const questionId = `Q${questionNumber}`;
-      const question = await parseQuestionFile(section, questionId);
+      const question = await parseQuestionFile(section, `Q${number}`);
       questions.push(question);
-      questionNumber++;
-      attempts++;
     } catch (error) {
-      // Если получаем ошибку 404, значит вопросов больше нет
-      console.log(`No more questions found in section ${section} after Q${questionNumber - 1}`);
-      break;
+      console.error(`Failed to load question Q${number} from section ${section}`);
     }
   }
   
-  if (questions.length === 0) {
-    console.log(`No questions found in section ${section}`);
-  } else {
-    console.log(`Loaded ${questions.length} questions from section ${section}`);
-  }
-  
+  console.log(`Successfully loaded ${questions.length} questions from section ${section}`);
   return questions;
 };
