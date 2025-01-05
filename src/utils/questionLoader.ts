@@ -33,17 +33,20 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   }
 
   const folders: string[] = [];
-  const maxQuestions = 100; // Ограничиваем максимальное количество вопросов
   
-  for (let i = 1; i <= maxQuestions; i++) {
+  // Проверяем только первые 10 вопросов для каждой секции
+  for (let i = 1; i <= 10; i++) {
     const questionPath = `/tests/${section}/Q${i}/question.txt`;
-    const exists = await fileExists(questionPath);
+    const imagePath = `/tests/${section}/Q${i}/image.png`;
     
-    if (!exists) {
-      break;
+    const [questionExists, imageExists] = await Promise.all([
+      fileExists(questionPath),
+      fileExists(imagePath)
+    ]);
+    
+    if (questionExists && imageExists) {
+      folders.push(`Q${i}`);
     }
-    
-    folders.push(`Q${i}`);
   }
   
   questionFoldersCache.set(section, folders);
@@ -68,8 +71,8 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
       fileExists(imagePath)
     ]);
     
-    if (!questionExists) {
-      console.log(`Question file not found: ${questionPath}`);
+    if (!questionExists || !imageExists) {
+      console.log(`Question or image not found: ${questionPath}`);
       return null;
     }
     
@@ -93,7 +96,7 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
       question: lines[0],
       options: lines.slice(1, -1),
       correctAnswer: lines[lines.length - 1],
-      image: imageExists ? imagePath : "/placeholder.svg"
+      image: imagePath
     };
 
     questionCache.set(cacheKey, questionData);
@@ -129,6 +132,11 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   
   const folders = await getQuestionFolders(section);
   console.log(`Loading ${folders.length} questions from section ${section}`);
+  
+  if (folders.length === 0) {
+    console.log(`No questions found in section ${section}`);
+    return [];
+  }
   
   const loadPromises = folders.map(questionId => parseQuestionFile(section, questionId));
   const questions = await Promise.all(loadPromises);
