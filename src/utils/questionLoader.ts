@@ -45,47 +45,40 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
   }
 };
 
-const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
-  // В каждом разделе по 3 вопроса (Q1, Q2, Q3)
-  const questionIds = ['Q1', 'Q2', 'Q3'];
-  const randomIndex = Math.floor(Math.random() * questionIds.length);
-  const questionId = questionIds[randomIndex];
-  
-  try {
-    return await parseQuestionFile(section, questionId);
-  } catch (error) {
-    console.error(`Failed to load question from section ${section}`);
-    return null;
-  }
-};
-
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
-  // Если section равен null, значит это тест по всем разделам
   if (section === null) {
     const allQuestions: QuestionData[] = [];
     
-    // Загружаем по одному случайному вопросу из каждого раздела
     for (const currentSection of sections) {
-      const question = await getRandomQuestionFromSection(currentSection);
-      if (question) {
-        allQuestions.push(question);
+      try {
+        // Try to load Q1 from each section
+        const question = await parseQuestionFile(currentSection, 'Q1');
+        if (question) {
+          allQuestions.push(question);
+        }
+      } catch (error) {
+        console.error(`Failed to load question from section ${currentSection}`);
+        continue;
       }
     }
     
     return allQuestions;
   }
   
-  // Если выбран конкретный раздел, загружаем все вопросы из него
   const questions: QuestionData[] = [];
-  for (let i = 1; i <= 3; i++) {
+  let questionNumber = 1;
+  
+  while (true) {
     try {
-      const questionId = `Q${i}`;
+      const questionId = `Q${questionNumber}`;
       const question = await parseQuestionFile(section, questionId);
       questions.push(question);
+      questionNumber++;
     } catch (error) {
-      console.error(`Failed to load Q${i} from section ${section}`);
+      // If we get an error (404), we've reached the end of available questions
+      console.error(`Failed to load ${section}/Q${questionNumber}`);
       break;
     }
   }
