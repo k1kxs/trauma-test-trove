@@ -33,19 +33,24 @@ const getQuestionFolders = async (section: string): Promise<string[]> => {
   }
 
   const folders: string[] = [];
+  let questionExists = true;
+  let i = 1;
   
-  // Проверяем только первые 10 вопросов для каждой секции
-  for (let i = 1; i <= 10; i++) {
+  // Проверяем вопросы последовательно, пока не найдем первый отсутствующий
+  while (questionExists) {
     const questionPath = `/tests/${section}/Q${i}/question.txt`;
     const imagePath = `/tests/${section}/Q${i}/image.png`;
     
-    const [questionExists, imageExists] = await Promise.all([
+    const [qExists, iExists] = await Promise.all([
       fileExists(questionPath),
       fileExists(imagePath)
     ]);
     
-    if (questionExists && imageExists) {
+    if (qExists && iExists) {
       folders.push(`Q${i}`);
+      i++;
+    } else {
+      questionExists = false;
     }
   }
   
