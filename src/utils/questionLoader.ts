@@ -68,9 +68,9 @@ const checkQuestionExists = async (section: string, questionNumber: number): Pro
 // Функция для подсчета количества вопросов в секции
 const countQuestionsInSection = async (section: string): Promise<number> => {
   let count = 0;
-  const MAX_QUESTIONS = 20; // Максимальное количество вопросов для проверки
+  const FOLDER_SEARCH_LIMIT = 100; // Максимальное количество папок для поиска
 
-  for (let i = 1; i <= MAX_QUESTIONS; i++) {
+  for (let i = 1; i <= FOLDER_SEARCH_LIMIT; i++) {
     const exists = await checkQuestionExists(section, i);
     if (!exists) break;
     count++;
