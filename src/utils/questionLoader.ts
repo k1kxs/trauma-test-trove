@@ -14,11 +14,55 @@ const sections = [
   "foot"
 ];
 
-export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
+// Функция для проверки существования файла
+const fileExists = async (path: string): Promise<boolean> => {
+  try {
+    const response = await fetch(path, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
+// Функция для получения списка всех папок с вопросами в разделе
+const getQuestionFolders = async (section: string): Promise<string[]> => {
+  const folders: string[] = [];
+  let i = 1;
+  
+  while (true) {
+    const folderPath = `/tests/${section}/Q${i}/question.txt`;
+    const exists = await fileExists(folderPath);
+    
+    if (!exists) {
+      break;
+    }
+    
+    folders.push(`Q${i}`);
+    i++;
+  }
+  
+  return folders;
+};
+
+export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   try {
     console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
-    const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
     
+    // Проверяем наличие необходимых файлов
+    const questionPath = `/tests/${section}/${questionId}/question.txt`;
+    const imagePath = `/tests/${section}/${questionId}/image.png`;
+    
+    const [questionExists, imageExists] = await Promise.all([
+      fileExists(questionPath),
+      fileExists(imagePath)
+    ]);
+    
+    if (!questionExists) {
+      console.warn(`Question file not found for ${section}/${questionId}`);
+      return null;
+    }
+    
+    const response = await fetch(questionPath);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -28,35 +72,35 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     const lines = content.trim().split('\n').filter(line => line.trim());
     
     if (lines.length < 4) {
-      throw new Error('Invalid question file format');
+      console.warn(`Invalid question format in ${section}/${questionId}`);
+      return null;
     }
 
     return {
       id: `${section}-${questionId}`,
       section,
-      question: "", // Empty string since we don't need question text
-      options: lines.slice(0, 4),
-      correctAnswer: lines[4].trim(),
-      image: `/tests/${section}/${questionId}/image.png`
+      question: lines[0],
+      options: lines.slice(1, 5),
+      correctAnswer: lines[4],
+      image: imageExists ? `/tests/${section}/${questionId}/image.png` : "/placeholder.svg"
     };
   } catch (error) {
     console.error(`Error loading question ${questionId} from section ${section}:`, error);
-    throw error;
+    return null;
   }
 };
 
 const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
-  // Проверяем наличие вопросов Q1 и Q2
-  const questionIds = ['Q1', 'Q2'];
-  const randomIndex = Math.floor(Math.random() * questionIds.length);
-  const questionId = questionIds[randomIndex];
-  
-  try {
-    return await parseQuestionFile(section, questionId);
-  } catch (error) {
-    console.error(`Failed to load question from section ${section}`);
+  const folders = await getQuestionFolders(section);
+  if (folders.length === 0) {
+    console.warn(`No valid questions found in section ${section}`);
     return null;
   }
+  
+  const randomIndex = Math.floor(Math.random() * folders.length);
+  const questionId = folders[randomIndex];
+  
+  return await parseQuestionFile(section, questionId);
 };
 
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
@@ -77,17 +121,14 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
     return allQuestions;
   }
   
-  // Если выбран конкретный раздел, загружаем только существующие вопросы (Q1 и Q2)
+  // Если выбран конкретный раздел, загружаем все доступные вопросы
   const questions: QuestionData[] = [];
-  const availableQuestions = ['Q1', 'Q2'];
+  const folders = await getQuestionFolders(section);
   
-  for (const questionId of availableQuestions) {
-    try {
-      const question = await parseQuestionFile(section, questionId);
+  for (const questionId of folders) {
+    const question = await parseQuestionFile(section, questionId);
+    if (question) {
       questions.push(question);
-    } catch (error) {
-      console.error(`Failed to load ${questionId} from section ${section}`);
-      break;
     }
   }
   
