@@ -46,8 +46,8 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 };
 
 const getRandomQuestionFromSection = async (section: string): Promise<QuestionData | null> => {
-  // В каждом разделе по 3 вопроса (Q1, Q2, Q3)
-  const questionIds = ['Q1', 'Q2', 'Q3'];
+  // Проверяем наличие вопросов Q1 и Q2
+  const questionIds = ['Q1', 'Q2'];
   const randomIndex = Math.floor(Math.random() * questionIds.length);
   const questionId = questionIds[randomIndex];
   
@@ -77,15 +77,16 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
     return allQuestions;
   }
   
-  // Если выбран конкретный раздел, загружаем все вопросы из него
+  // Если выбран конкретный раздел, загружаем только существующие вопросы (Q1 и Q2)
   const questions: QuestionData[] = [];
-  for (let i = 1; i <= 3; i++) {
+  const availableQuestions = ['Q1', 'Q2'];
+  
+  for (const questionId of availableQuestions) {
     try {
-      const questionId = `Q${i}`;
       const question = await parseQuestionFile(section, questionId);
       questions.push(question);
     } catch (error) {
-      console.error(`Failed to load Q${i} from section ${section}`);
+      console.error(`Failed to load ${questionId} from section ${section}`);
       break;
     }
   }
