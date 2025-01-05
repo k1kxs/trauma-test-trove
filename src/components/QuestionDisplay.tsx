@@ -61,7 +61,7 @@ const QuestionDisplay = ({
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
-        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel} hideCloseButton>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" onWheel={handleWheel}>
           <Button
             variant="ghost"
             size="icon"
