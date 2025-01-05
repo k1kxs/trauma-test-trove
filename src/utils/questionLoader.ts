@@ -16,6 +16,7 @@ const sections = [
 
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData> => {
   try {
+    console.log(`Loading question from section: ${section}, questionId: ${questionId}`);
     const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
     
     if (!response.ok) {
@@ -23,9 +24,10 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
     }
     
     const content = await response.text();
+    console.log(`Question content for ${section}/${questionId}:`, content);
     const lines = content.trim().split('\n').filter(line => line.trim());
     
-    if (lines.length < 5) {
+    if (lines.length < 4) {
       throw new Error('Invalid question file format');
     }
 
@@ -58,6 +60,8 @@ const getRandomQuestionFromSection = async (section: string): Promise<QuestionDa
 };
 
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
+  console.log('Loading questions for section:', section);
+  
   // Если section равен null, значит это тест по всем разделам
   if (section === null) {
     const allQuestions: QuestionData[] = [];
