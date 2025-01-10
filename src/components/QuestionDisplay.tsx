@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { ZoomIn, X, ZoomOut, RotateCcw } from "lucide-react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QuestionDisplayProps {
@@ -21,92 +22,15 @@ const QuestionDisplay = ({
   totalQuestions,
   selectedAnswer,
   onAnswerSelect,
-  onComplete
 }: QuestionDisplayProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const dragStartRef = useRef({ x: 0, y: 0 });
-  const lastPositionRef = useRef({ x: 0, y: 0 });
 
   const handleImageClick = () => {
     setIsImageOpen(true);
-    resetZoom();
-  };
-
-  const resetZoom = () => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    if (!imageRef.current || !containerRef.current) return;
-
-    const rect = imageRef.current.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
-
-    // Calculate mouse position relative to image center
-    const mouseX = e.clientX - rect.left - rect.width / 2;
-    const mouseY = e.clientY - rect.top - rect.height / 2;
-
-    // Calculate new scale
-    const delta = e.deltaY * -0.002;
-    const newScale = Math.min(Math.max(0.5, scale + delta), 4);
-    
-    // Calculate new position to zoom towards mouse
-    const scaleFactor = newScale / scale;
-    const newPosition = {
-      x: position.x + mouseX * (1 - scaleFactor),
-      y: position.y + mouseY * (1 - scaleFactor)
-    };
-
-    setScale(newScale);
-    setPosition(newPosition);
-  };
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (!containerRef.current) return;
-    
-    setIsDragging(true);
-    containerRef.current.style.cursor = 'grabbing';
-    dragStartRef.current = { x: e.clientX, y: e.clientY };
-    lastPositionRef.current = position;
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-
-    const dx = e.clientX - dragStartRef.current.x;
-    const dy = e.clientY - dragStartRef.current.y;
-
-    setPosition({
-      x: lastPositionRef.current.x + dx,
-      y: lastPositionRef.current.y + dy
-    });
-  };
-
-  const handlePointerUp = () => {
-    if (!containerRef.current) return;
-    
-    setIsDragging(false);
-    containerRef.current.style.cursor = 'grab';
   };
 
   const handleDialogClose = () => {
     setIsImageOpen(false);
-    resetZoom();
-  };
-
-  const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.5, 4));
-  };
-
-  const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.5, 0.5));
   };
 
   if (!question) {
@@ -141,66 +65,68 @@ const QuestionDisplay = ({
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/95">
-          <div className="absolute right-4 top-4 z-50 flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={zoomIn}
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-            >
-              <ZoomIn className="h-4 w-4 text-white" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={zoomOut}
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-            >
-              <ZoomOut className="h-4 w-4 text-white" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={resetZoom}
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-            >
-              <RotateCcw className="h-4 w-4 text-white" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDialogClose}
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-            >
-              <X className="h-4 w-4 text-white" />
-            </Button>
-          </div>
-          
-          <motion.div 
-            ref={containerRef}
-            className="relative w-full h-[90vh] flex items-center justify-center cursor-grab touch-none"
-            onWheel={handleWheel}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
-            initial={false}
+          <TransformWrapper
+            initialScale={1}
+            minScale={0.5}
+            maxScale={4}
+            centerOnInit={true}
+            wheel={{ wheelDisabled: false }}
+            pinch={{ disabled: false }}
+            doubleClick={{ disabled: true }}
           >
-            <motion.img
-              ref={imageRef}
-              src={question.image || "/placeholder.svg"}
-              alt="Question image"
-              className="select-none"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: scale <= 1 ? 'contain' : 'none',
-                transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
-              }}
-              draggable={false}
-            />
-          </motion.div>
+            {({ zoomIn, zoomOut, resetTransform }) => (
+              <>
+                <div className="absolute right-4 top-4 z-50 flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => zoomIn()}
+                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                  >
+                    <ZoomIn className="h-4 w-4 text-white" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => zoomOut()}
+                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                  >
+                    <ZoomOut className="h-4 w-4 text-white" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => resetTransform()}
+                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                  >
+                    <RotateCcw className="h-4 w-4 text-white" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleDialogClose}
+                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                  >
+                    <X className="h-4 w-4 text-white" />
+                  </Button>
+                </div>
+                <TransformComponent
+                  wrapperClass="w-full h-[90vh] cursor-grab active:cursor-grabbing"
+                  contentClass="w-full h-full flex items-center justify-center"
+                >
+                  <motion.img
+                    src={question.image || "/placeholder.svg"}
+                    alt="Question image"
+                    className="max-w-none select-none"
+                    draggable={false}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
         </DialogContent>
       </Dialog>
 
