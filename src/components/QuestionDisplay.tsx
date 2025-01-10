@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
 import { useState } from "react";
 import { ZoomIn, X, ZoomOut, RotateCcw } from "lucide-react";
@@ -65,14 +65,17 @@ const QuestionDisplay = ({
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/95">
+          <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
           <TransformWrapper
             initialScale={1}
             minScale={0.5}
             maxScale={4}
             centerOnInit={true}
+            limitToBounds={false}
             wheel={{ wheelDisabled: false }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
+            panning={{ velocityDisabled: true }}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
