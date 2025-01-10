@@ -3,7 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
 import { useState, useRef, useEffect } from "react";
-import { ZoomIn, X } from "lucide-react";
+import { ZoomIn, X, ZoomOut, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QuestionDisplayProps {
@@ -24,78 +24,89 @@ const QuestionDisplay = ({
   onComplete
 }: QuestionDisplayProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [transform, setTransform] = useState({
-    scale: 1,
-    x: 0,
-    y: 0,
-  });
-  const imageRef = useRef<HTMLImageElement>(null);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const lastPointerPosition = useRef({ x: 0, y: 0 });
-  const isDragging = useRef(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const lastPositionRef = useRef({ x: 0, y: 0 });
 
   const handleImageClick = () => {
     setIsImageOpen(true);
-    setTransform({ scale: 1, x: 0, y: 0 });
+    resetZoom();
+  };
+
+  const resetZoom = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
   };
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newScale = Math.min(Math.max(0.5, transform.scale + delta), 4);
+    if (!imageRef.current || !containerRef.current) return;
+
+    const rect = imageRef.current.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    // Calculate mouse position relative to image center
+    const mouseX = e.clientX - rect.left - rect.width / 2;
+    const mouseY = e.clientY - rect.top - rect.height / 2;
+
+    // Calculate new scale
+    const delta = e.deltaY * -0.002;
+    const newScale = Math.min(Math.max(0.5, scale + delta), 4);
     
-    if (imageRef.current && containerRef.current) {
-      const rect = imageRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
-      
-      // Calculate mouse position relative to image
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-      
-      // Calculate new position to zoom towards mouse
-      const scaleChange = newScale - transform.scale;
-      const newX = transform.x - (mouseX * scaleChange);
-      const newY = transform.y - (mouseY * scaleChange);
-      
-      setTransform({ scale: newScale, x: newX, y: newY });
-    }
+    // Calculate new position to zoom towards mouse
+    const scaleFactor = newScale / scale;
+    const newPosition = {
+      x: position.x + mouseX * (1 - scaleFactor),
+      y: position.y + mouseY * (1 - scaleFactor)
+    };
+
+    setScale(newScale);
+    setPosition(newPosition);
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    isDragging.current = true;
-    lastPointerPosition.current = { x: e.clientX, y: e.clientY };
-    if (containerRef.current) {
-      containerRef.current.style.cursor = 'grabbing';
-    }
+    if (!containerRef.current) return;
+    
+    setIsDragging(true);
+    containerRef.current.style.cursor = 'grabbing';
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    lastPositionRef.current = position;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    e.preventDefault();
-    if (!isDragging.current) return;
+    if (!isDragging) return;
 
-    const dx = e.clientX - lastPointerPosition.current.x;
-    const dy = e.clientY - lastPointerPosition.current.y;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
 
-    setTransform(prev => ({
-      ...prev,
-      x: prev.x + dx,
-      y: prev.y + dy,
-    }));
-
-    lastPointerPosition.current = { x: e.clientX, y: e.clientY };
+    setPosition({
+      x: lastPositionRef.current.x + dx,
+      y: lastPositionRef.current.y + dy
+    });
   };
 
   const handlePointerUp = () => {
-    isDragging.current = false;
-    if (containerRef.current) {
-      containerRef.current.style.cursor = 'grab';
-    }
+    if (!containerRef.current) return;
+    
+    setIsDragging(false);
+    containerRef.current.style.cursor = 'grab';
   };
 
   const handleDialogClose = () => {
     setIsImageOpen(false);
-    setTransform({ scale: 1, x: 0, y: 0 });
+    resetZoom();
+  };
+
+  const zoomIn = () => {
+    setScale(prev => Math.min(prev + 0.5, 4));
+  };
+
+  const zoomOut = () => {
+    setScale(prev => Math.max(prev - 0.5, 0.5));
   };
 
   if (!question) {
@@ -130,15 +141,44 @@ const QuestionDisplay = ({
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/95">
-          <button 
-            onClick={handleDialogClose}
-            className="absolute right-4 top-4 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 group z-50"
-          >
-            <X className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-90" />
-          </button>
+          <div className="absolute right-4 top-4 z-50 flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={zoomIn}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            >
+              <ZoomIn className="h-4 w-4 text-white" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={zoomOut}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            >
+              <ZoomOut className="h-4 w-4 text-white" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={resetZoom}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            >
+              <RotateCcw className="h-4 w-4 text-white" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDialogClose}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            >
+              <X className="h-4 w-4 text-white" />
+            </Button>
+          </div>
+          
           <motion.div 
             ref={containerRef}
-            className="relative w-full h-[90vh] flex items-center justify-center cursor-grab"
+            className="relative w-full h-[90vh] flex items-center justify-center cursor-grab touch-none"
             onWheel={handleWheel}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -150,11 +190,13 @@ const QuestionDisplay = ({
               ref={imageRef}
               src={question.image || "/placeholder.svg"}
               alt="Question image"
-              className="w-full h-full select-none"
-              style={{ 
-                objectFit: transform.scale <= 1 ? 'contain' : 'none',
-                transform: `scale(${transform.scale}) translate(${transform.x}px, ${transform.y}px)`,
-                transition: isDragging.current ? 'none' : 'transform 0.2s ease-out'
+              className="select-none"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: scale <= 1 ? 'contain' : 'none',
+                transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
               }}
               draggable={false}
             />
