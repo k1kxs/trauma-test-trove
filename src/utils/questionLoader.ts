@@ -66,11 +66,8 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
 const checkQuestionExists = async (section: string, questionNumber: number): Promise<boolean> => {
   try {
     const response = await fetch(`/tests/${section}/Q${questionNumber}/question.txt`);
-    if (!response.ok) {
-      return false;
-    }
     const content = await response.text();
-    return !content.includes('<!DOCTYPE html>');
+    return response.ok && !content.includes('<!DOCTYPE html>');
   } catch {
     return false;
   }
@@ -78,13 +75,31 @@ const checkQuestionExists = async (section: string, questionNumber: number): Pro
 
 // Функция для подсчета количества вопросов в секции
 const countQuestionsInSection = async (section: string): Promise<number> => {
-  let count = 0;
-  const FOLDER_SEARCH_LIMIT = 100; // Максимальное количество папок для поиска
+  // Определяем максимальное количество вопросов для каждой секции
+  const sectionLimits: { [key: string]: number } = {
+    arms: 2,      // Только Q1 и Q2 существуют
+    brush: 1,     // Только Q1 существует
+    forearm: 3,   // Q1, Q2, Q3 существуют
+    hip: 1,       // Только Q1 существует
+    humerus: 1,   // Только Q1 существует
+    lungs: 2,     // Q1 и Q2 существуют
+    pelvis: 3,    // Q1, Q2, Q3 существуют
+    ribs: 3,      // Q1, Q2, Q3 существуют
+    shin: 3,      // Q1, Q2, Q3 существуют
+    spine: 3,     // Q1, Q2, Q3 существуют
+    foot: 3       // Q1, Q2, Q3 существуют
+  };
 
-  for (let i = 1; i <= FOLDER_SEARCH_LIMIT; i++) {
+  const maxQuestions = sectionLimits[section] || 1;
+  let count = 0;
+
+  for (let i = 1; i <= maxQuestions; i++) {
     const exists = await checkQuestionExists(section, i);
-    if (!exists) break;
-    count++;
+    if (exists) {
+      count++;
+    } else {
+      break; // Прекращаем поиск, если не нашли следующий вопрос
+    }
   }
 
   console.log(`Found ${count} questions in section ${section}`);
