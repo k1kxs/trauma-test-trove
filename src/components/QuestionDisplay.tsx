@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ZoomIn, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface QuestionDisplayProps {
   question: QuestionData;
@@ -23,11 +24,80 @@ const QuestionDisplay = ({
   onComplete
 }: QuestionDisplayProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
+  const [transform, setTransform] = useState({
+    scale: 1,
+    x: 0,
+    y: 0,
+  });
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lastPointerPosition = useRef({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+
+  const handleImageClick = () => {
+    setIsImageOpen(true);
+    setTransform({ scale: 1, x: 0, y: 0 });
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY * -0.01;
+    const newScale = Math.min(Math.max(0.5, transform.scale + delta), 4);
+    
+    if (imageRef.current && containerRef.current) {
+      const rect = imageRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+      
+      // Calculate mouse position relative to image
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      // Calculate new position to zoom towards mouse
+      const scaleChange = newScale - transform.scale;
+      const newX = transform.x - (mouseX * scaleChange);
+      const newY = transform.y - (mouseY * scaleChange);
+      
+      setTransform({ scale: newScale, x: newX, y: newY });
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    lastPointerPosition.current = { x: e.clientX, y: e.clientY };
+    if (containerRef.current) {
+      containerRef.current.style.cursor = 'grabbing';
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    e.preventDefault();
+    if (!isDragging.current) return;
+
+    const dx = e.clientX - lastPointerPosition.current.x;
+    const dy = e.clientY - lastPointerPosition.current.y;
+
+    setTransform(prev => ({
+      ...prev,
+      x: prev.x + dx,
+      y: prev.y + dy,
+    }));
+
+    lastPointerPosition.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = () => {
+    isDragging.current = false;
+    if (containerRef.current) {
+      containerRef.current.style.cursor = 'grab';
+    }
+  };
+
+  const handleDialogClose = () => {
+    setIsImageOpen(false);
+    setTransform({ scale: 1, x: 0, y: 0 });
+  };
+
   if (!question) {
     return <div>Loading question...</div>;
   }
@@ -35,49 +105,16 @@ const QuestionDisplay = ({
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
   const answerLetters = ['A', 'B', 'C', 'D'];
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newScale = Math.min(Math.max(0.5, scale + delta), 3);
-    setScale(newScale);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleDialogClose = () => {
-    setIsImageOpen(false);
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  };
-
   return (
     <div className="space-y-6">
       <div>
         <Progress value={progress} className="h-2 bg-gray-100" />
       </div>
 
-      <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner group cursor-zoom-in"
-           onClick={() => setIsImageOpen(true)}>
+      <div 
+        className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner group cursor-zoom-in"
+        onClick={handleImageClick}
+      >
         <div className="absolute top-3 right-3 bg-black/40 text-white px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-[2px]">
           {currentQuestion + 1}/{totalQuestions}
         </div>
@@ -92,35 +129,36 @@ const QuestionDisplay = ({
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
-        <DialogContent 
-          className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black/95" 
-          onWheel={handleWheel}
-        >
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/95">
           <button 
             onClick={handleDialogClose}
             className="absolute right-4 top-4 p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 group z-50"
           >
             <X className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-90" />
           </button>
-          <div 
-            className="relative w-full h-[90vh] flex items-center justify-center cursor-move"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+          <motion.div 
+            ref={containerRef}
+            className="relative w-full h-[90vh] flex items-center justify-center cursor-grab"
+            onWheel={handleWheel}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+            initial={false}
           >
-            <img
+            <motion.img
+              ref={imageRef}
               src={question.image || "/placeholder.svg"}
               alt="Question image"
-              className="w-full h-full object-cover transition-transform select-none"
+              className="w-full h-full select-none"
               style={{ 
-                transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-                cursor: isDragging ? 'grabbing' : 'grab',
-                objectFit: scale <= 1 ? 'contain' : 'cover'
+                objectFit: transform.scale <= 1 ? 'contain' : 'none',
+                transform: `scale(${transform.scale}) translate(${transform.x}px, ${transform.y}px)`,
+                transition: isDragging.current ? 'none' : 'transform 0.2s ease-out'
               }}
               draggable={false}
             />
-          </div>
+          </motion.div>
         </DialogContent>
       </Dialog>
 
