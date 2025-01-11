@@ -73,17 +73,16 @@ const checkQuestionExists = async (section: string, questionNumber: number): Pro
 
 // Функция для подсчета количества вопросов в секции
 const countQuestionsInSection = async (section: string): Promise<number> => {
-  // Определяем максимальное количество вопросов для каждой секции
   const sectionLimits: { [key: string]: number } = {
-    brush: 100,     // Только Q1 существует
-    forearm: 100,   // Q1, Q2, Q3 существуют
-    hip: 100,       // Только Q1 существует
-    humerus: 100,   // Только Q1 существует
-    pelvis: 100,    // Q1, Q2, Q3 существуют
-    ribs: 100,      // Q1, Q2, Q3 существуют
-    shin: 100,      // Q1, Q2, Q3 существуют
-    spine: 100,     // Q1, Q2, Q3 существуют
-    foot: 100       // Q1, Q2, Q3 существуют
+    brush: 100,
+    forearm: 100,
+    hip: 100,
+    humerus: 100,
+    pelvis: 100,
+    ribs: 100,
+    shin: 100,
+    spine: 100,
+    foot: 100
   };
 
   const maxQuestions = sectionLimits[section] || 1;
@@ -94,7 +93,7 @@ const countQuestionsInSection = async (section: string): Promise<number> => {
     if (exists) {
       count++;
     } else {
-      break; // Прекращаем поиск, если не нашли следующий вопрос
+      break;
     }
   }
 
@@ -102,26 +101,34 @@ const countQuestionsInSection = async (section: string): Promise<number> => {
   return count;
 };
 
+// Функция для загрузки всех вопросов из секции
+const loadAllQuestionsFromSection = async (section: string): Promise<QuestionData[]> => {
+  const questionCount = await countQuestionsInSection(section);
+  const questions: QuestionData[] = [];
+
+  for (let i = 1; i <= questionCount; i++) {
+    const question = await parseQuestionFile(section, `Q${i}`);
+    if (question) {
+      questions.push(question);
+    }
+  }
+
+  return questions;
+};
+
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   console.log('Loading questions for section:', section);
   
   if (section === null) {
-    // Загружаем по одному случайному вопросу из каждой секции
+    // Загружаем ВСЕ вопросы из ВСЕХ секций
     const allQuestions: QuestionData[] = [];
     
     for (const currentSection of sections) {
       try {
-        const questionCount = await countQuestionsInSection(currentSection);
-        if (questionCount > 0) {
-          // Выбираем случайный номер вопроса из доступных
-          const randomQuestionNumber = Math.floor(Math.random() * questionCount) + 1;
-          const question = await parseQuestionFile(currentSection, `Q${randomQuestionNumber}`);
-          if (question) {
-            allQuestions.push(question);
-          }
-        }
+        const sectionQuestions = await loadAllQuestionsFromSection(currentSection);
+        allQuestions.push(...sectionQuestions);
       } catch (error) {
-        console.log(`No questions found in section ${currentSection}`);
+        console.log(`Error loading questions from section ${currentSection}:`, error);
         continue;
       }
     }
