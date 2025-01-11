@@ -22,19 +22,29 @@ const shuffleArray = <T>(array: T[]): T[] => {
   return shuffled;
 };
 
-// Функция для проверки существования файла
+// Кэш для хранения результатов проверки существования файлов
+const fileExistsCache = new Map<string, boolean>();
+
 const checkFileExists = async (url: string): Promise<boolean> => {
+  if (fileExistsCache.has(url)) {
+    return fileExistsCache.get(url)!;
+  }
+
   try {
-    const response = await fetch(url);
-    return response.ok;
+    const response = await fetch(url, { method: 'HEAD' });
+    const exists = response.ok;
+    fileExistsCache.set(url, exists);
+    return exists;
   } catch {
+    fileExistsCache.set(url, false);
     return false;
   }
 };
 
 export const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   try {
-    const response = await fetch(`/tests/${section}/${questionId}/question.txt`);
+    const fileUrl = `/tests/${section}/${questionId}/question.txt`;
+    const response = await fetch(fileUrl);
     
     if (!response.ok) {
       return null;
@@ -65,44 +75,45 @@ export const parseQuestionFile = async (section: string, questionId: string): Pr
   }
 };
 
-// Параллельная загрузка вопросов из секции
+// Загрузка вопросов из секции с ограничением параллельных запросов
 const loadAllQuestionsFromSection = async (section: string): Promise<QuestionData[]> => {
   const questions: QuestionData[] = [];
-  const questionPromises: Promise<QuestionData | null>[] = [];
+  const batchSize = 5; // Загружаем по 5 вопросов одновременно
   
-  // Сначала проверяем, какие вопросы существуют
-  for (let i = 1; i <= 20; i++) {
-    const questionId = `Q${i}`;
-    const fileUrl = `/tests/${section}/${questionId}/question.txt`;
+  for (let i = 1; i <= 20; i += batchSize) {
+    const batch = [];
     
-    // Если файл существует, добавляем его в список для загрузки
-    if (await checkFileExists(fileUrl)) {
-      questionPromises.push(parseQuestionFile(section, questionId));
+    // Формируем батч запросов
+    for (let j = 0; j < batchSize && (i + j) <= 20; j++) {
+      const questionId = `Q${i + j}`;
+      const fileUrl = `/tests/${section}/${questionId}/question.txt`;
+      
+      if (await checkFileExists(fileUrl)) {
+        batch.push(parseQuestionFile(section, questionId));
+      }
     }
+    
+    // Загружаем батч параллельно
+    const results = await Promise.all(batch);
+    questions.push(...results.filter((q): q is QuestionData => q !== null));
   }
   
-  // Загружаем все существующие вопросы параллельно
-  const results = await Promise.all(questionPromises);
-  
-  // Фильтруем успешно загруженные вопросы
-  return results.filter((q): q is QuestionData => q !== null);
+  return questions;
 };
 
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
-  console.log('Loading questions for section:', section);
-  
   if (section === null) {
-    // Параллельная загрузка вопросов из всех секций
-    const sectionPromises = sections.map(loadAllQuestionsFromSection);
-    const sectionResults = await Promise.all(sectionPromises);
+    // Загружаем вопросы из всех секций последовательно
+    const allQuestions: QuestionData[] = [];
     
-    // Объединяем все вопросы в один массив
-    const allQuestions = sectionResults.flat();
+    for (const currentSection of sections) {
+      const sectionQuestions = await loadAllQuestionsFromSection(currentSection);
+      allQuestions.push(...sectionQuestions);
+    }
     
     return shuffleArray(allQuestions);
   }
   
-  // Загрузка вопросов из конкретной секции
   const questions = await loadAllQuestionsFromSection(section);
   return shuffleArray(questions);
 };
