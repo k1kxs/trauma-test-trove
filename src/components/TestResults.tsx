@@ -3,9 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { QuestionData } from "@/types/questions.types";
-import { saveTestResult } from "@/utils/storage";
-import { getUserData } from "@/utils/storage";
-import { toast } from "@/components/ui/use-toast";
 
 interface TestResultsProps {
   correctAnswers: number;
@@ -22,25 +19,6 @@ const TestResults = ({
   onRestart,
   questions = []
 }: TestResultsProps) => {
-  const handleSaveResults = () => {
-    const userData = getUserData();
-    if (userData) {
-      const result = {
-        fullName: userData.fullName,
-        groupNumber: userData.groupNumber,
-        section: questions[0]?.section || "Неизвестный раздел",
-        correctAnswers,
-        totalQuestions,
-        date: new Date().toISOString()
-      };
-      saveTestResult(result);
-      toast({
-        title: "Результаты сохранены",
-        description: `Правильных ответов: ${correctAnswers} из ${totalQuestions}`,
-      });
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -65,10 +43,7 @@ const TestResults = ({
 
           <div className="grid grid-cols-1 gap-4">
             <Button
-              onClick={() => {
-                handleSaveResults();
-                onComplete();
-              }}
+              onClick={onComplete}
               size="lg"
               className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white h-14 text-base"
             >
