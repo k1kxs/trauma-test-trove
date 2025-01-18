@@ -15,17 +15,14 @@ interface QuestionImageProps {
 const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImageProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(image);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    setIsTransitioning(true);
     const timer = setTimeout(() => {
       setCurrentImage(image);
-      setIsTransitioning(false);
-    }, 300); // Задержка соответствует длительности анимации исчезновения
+    }, 500); // Задержка перед показом новой картинки
 
     return () => clearTimeout(timer);
-  }, [image]);
+  }, [currentQuestion, image]);
 
   const handleImageClick = () => setIsImageOpen(true);
   const handleDialogClose = () => setIsImageOpen(false);
@@ -48,10 +45,13 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             src={currentImage}
             alt="Question image"
             className="w-full h-full object-contain transition-transform group-hover:scale-105"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isTransitioning ? 0 : 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ 
+              duration: 0.5,
+              ease: "easeInOut"
+            }}
           />
         </AnimatePresence>
       </div>
