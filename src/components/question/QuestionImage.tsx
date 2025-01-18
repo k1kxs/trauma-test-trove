@@ -70,6 +70,31 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             }}
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
+            initialPositionX={0}
+            initialPositionY={0}
+            onInit={(ref) => {
+              // Получаем размеры изображения и экрана
+              const img = new Image();
+              img.src = image;
+              img.onload = () => {
+                const viewportWidth = window.innerWidth * 0.9; // 90% от ширины экрана
+                const viewportHeight = window.innerHeight * 0.9; // 90% от высоты экрана
+                const imageRatio = img.width / img.height;
+                const screenRatio = viewportWidth / viewportHeight;
+
+                let scale = 1;
+                if (imageRatio > screenRatio) {
+                  // Изображение шире экрана
+                  scale = viewportWidth / img.width;
+                } else {
+                  // Изображение выше экрана
+                  scale = viewportHeight / img.height;
+                }
+                
+                // Устанавливаем масштаб
+                ref.setTransform(0, 0, scale);
+              };
+            }}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
