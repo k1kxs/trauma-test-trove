@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { saveUserData } from "@/utils/storage";
+import { toast } from "@/components/ui/use-toast";
 
 interface LoginProps {
   onLogin: (data: { fullName: string; groupNumber: string }) => void;
@@ -15,7 +17,12 @@ const Login = ({ onLogin }: LoginProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (fullName.trim() && groupNumber.trim()) {
-      onLogin({ fullName, groupNumber });
+      saveUserData(fullName.trim(), groupNumber.trim());
+      onLogin({ fullName: fullName.trim(), groupNumber: groupNumber.trim() });
+      toast({
+        title: "Успешная авторизация",
+        description: "Данные пользователя сохранены",
+      });
     }
   };
 
