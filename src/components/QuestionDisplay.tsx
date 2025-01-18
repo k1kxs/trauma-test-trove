@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { QuestionData } from "@/types/questions.types";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ZoomIn, X, ZoomOut, RotateCcw } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,12 @@ const QuestionDisplay = ({
   onAnswerSelect,
 }: QuestionDisplayProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const imageRef = useRef<string>(question?.image || "/placeholder.svg");
+
+  // Обновляем ссылку на изображение только когда меняется вопрос
+  useEffect(() => {
+    imageRef.current = question?.image || "/placeholder.svg";
+  }, [question?.id]); // Зависимость от ID вопроса вместо самого изображения
 
   const handleImageClick = () => {
     setIsImageOpen(true);
@@ -57,7 +63,7 @@ const QuestionDisplay = ({
           <ZoomIn className="w-8 h-8 text-gray-700" />
         </div>
         <img
-          src={question.image || "/placeholder.svg"}
+          src={imageRef.current}
           alt="Question image"
           className="w-full h-full object-contain transition-transform group-hover:scale-105"
         />
@@ -118,7 +124,7 @@ const QuestionDisplay = ({
                   contentClass="w-full h-full flex items-center justify-center"
                 >
                   <motion.img
-                    src={question.image || "/placeholder.svg"}
+                    src={imageRef.current}
                     alt="Question image"
                     className="max-w-none select-none"
                     draggable={false}
