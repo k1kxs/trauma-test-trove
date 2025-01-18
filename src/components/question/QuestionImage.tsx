@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { motion, AnimatePresence } from "framer-motion";
-import { ZoomOut, RotateCcw, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface QuestionImageProps {
@@ -72,33 +72,9 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
           >
-            {({ zoomIn, zoomOut, resetTransform }) => (
+            {({ resetTransform }) => (
               <>
                 <div className={`${isMobile ? 'top-4 right-4' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => zoomIn()}
-                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
-                  >
-                    <ZoomIn className="h-4 w-4 text-gray-900" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => zoomOut()}
-                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
-                  >
-                    <ZoomOut className="h-4 w-4 text-gray-900" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => resetTransform()}
-                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
-                  >
-                    <RotateCcw className="h-4 w-4 text-gray-900" />
-                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
