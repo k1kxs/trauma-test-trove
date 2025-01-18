@@ -35,7 +35,9 @@ const TestResults = ({
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-4">
             <p className="text-2xl font-semibold text-gray-800">
-              Правильных ответов: {correctAnswers} из {totalQuestions}
+              Правильных ответов:
+              <br />
+              {correctAnswers} из {totalQuestions}
             </p>
           </div>
 
