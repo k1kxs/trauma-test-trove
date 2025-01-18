@@ -79,7 +79,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomIn()}
-                    className="bg-gray-400/90 hover:bg-gray-500/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
                   >
                     <ZoomIn className="h-4 w-4 text-gray-900" />
                   </Button>
@@ -87,7 +87,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomOut()}
-                    className="bg-gray-400/90 hover:bg-gray-500/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
                   >
                     <ZoomOut className="h-4 w-4 text-gray-900" />
                   </Button>
@@ -95,7 +95,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => resetTransform()}
-                    className="bg-gray-400/90 hover:bg-gray-500/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
                   >
                     <RotateCcw className="h-4 w-4 text-gray-900" />
                   </Button>
@@ -103,7 +103,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={handleDialogClose}
-                    className="bg-gray-400/90 hover:bg-gray-500/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
                   >
                     <X className="h-4 w-4 text-gray-900" />
                   </Button>
