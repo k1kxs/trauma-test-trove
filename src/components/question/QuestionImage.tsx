@@ -61,13 +61,13 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             maxScale={4}
             centerOnInit={true}
             limitToBounds={true}
-            wheel={{ wheelDisabled: isMobile }}
+            wheel={{ wheelDisabled: false }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
             panning={{ 
               velocityDisabled: true,
-              lockAxisY: isMobile,
-              excluded: isMobile ? ['button', 'a'] : [] 
+              lockAxisY: false,
+              excluded: ['button', 'a']
             }}
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
