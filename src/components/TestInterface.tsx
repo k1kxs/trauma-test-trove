@@ -22,7 +22,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     enabled: true,
     retry: false,
     staleTime: Infinity, // Предотвращает повторные запросы данных
-    cacheTime: Infinity, // Держит данные в кэше бесконечно
+    gcTime: Infinity, // Держит данные в кэше бесконечно (новый параметр вместо cacheTime)
     refetchOnWindowFocus: false, // Отключаем повторную загрузку при фокусе окна
     refetchOnMount: false, // Отключаем повторную загрузку при монтировании
     refetchOnReconnect: false // Отключаем повторную загрузку при восстановлении соединения
