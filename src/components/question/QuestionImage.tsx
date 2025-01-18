@@ -3,7 +3,7 @@ import { ZoomIn } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ZoomOut, RotateCcw, X } from "lucide-react";
 
 interface QuestionImageProps {
@@ -15,10 +15,17 @@ interface QuestionImageProps {
 const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImageProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(image);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    setCurrentImage(image);
-  }, [image, currentQuestion]);
+    setIsTransitioning(true);
+    const timer = setTimeout(() => {
+      setCurrentImage(image);
+      setIsTransitioning(false);
+    }, 300); // Задержка соответствует длительности анимации исчезновения
+
+    return () => clearTimeout(timer);
+  }, [image]);
 
   const handleImageClick = () => setIsImageOpen(true);
   const handleDialogClose = () => setIsImageOpen(false);
@@ -35,15 +42,18 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 transition-opacity">
           <ZoomIn className="w-8 h-8 text-gray-700" />
         </div>
-        <motion.img
-          key={currentImage}
-          src={currentImage}
-          alt="Question image"
-          className="w-full h-full object-contain transition-transform group-hover:scale-105"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        />
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentImage}
+            src={currentImage}
+            alt="Question image"
+            className="w-full h-full object-contain transition-transform group-hover:scale-105"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isTransitioning ? 0 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
