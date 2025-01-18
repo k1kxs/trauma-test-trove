@@ -74,7 +74,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
-                <div className={`${isMobile ? 'top-4 left-1/2 -translate-x-1/2' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
+                <div className={`${isMobile ? 'top-4 right-4' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
                   <Button
                     variant="ghost"
                     size="icon"
