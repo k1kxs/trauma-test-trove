@@ -79,33 +79,33 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomIn()}
-                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-gray-200/90 hover:bg-gray-300/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
-                    <ZoomIn className="h-4 w-4 text-white" />
+                    <ZoomIn className="h-4 w-4 text-gray-700" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomOut()}
-                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-gray-200/90 hover:bg-gray-300/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
-                    <ZoomOut className="h-4 w-4 text-white" />
+                    <ZoomOut className="h-4 w-4 text-gray-700" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => resetTransform()}
-                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-gray-200/90 hover:bg-gray-300/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
-                    <RotateCcw className="h-4 w-4 text-white" />
+                    <RotateCcw className="h-4 w-4 text-gray-700" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={handleDialogClose}
-                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
+                    className="bg-gray-200/90 hover:bg-gray-300/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
-                    <X className="h-4 w-4 text-white" />
+                    <X className="h-4 w-4 text-gray-700" />
                   </Button>
                 </div>
                 <TransformComponent
