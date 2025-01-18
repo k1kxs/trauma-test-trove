@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { QuestionData } from "@/types/questions.types";
 import ProgressBar from "./question/ProgressBar";
 import QuestionImage from "./question/QuestionImage";
@@ -20,12 +20,6 @@ const QuestionDisplay = ({
   selectedAnswer,
   onAnswerSelect,
 }: QuestionDisplayProps) => {
-  const imageRef = useRef<string>(question?.image || "/placeholder.svg");
-
-  useEffect(() => {
-    imageRef.current = question?.image || "/placeholder.svg";
-  }, [question?.id]);
-
   if (!question) {
     return <div>Loading question...</div>;
   }
@@ -38,7 +32,7 @@ const QuestionDisplay = ({
       />
 
       <QuestionImage 
-        image={imageRef.current}
+        image={question.image}
         currentQuestion={currentQuestion}
         totalQuestions={totalQuestions}
       />
