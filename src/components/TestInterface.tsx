@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
-import { QuestionData } from "@/types/questions.types";
 import { loadQuestions, preloadAllQuestions } from "@/utils/questionLoader";
 import { useQuery } from "@tanstack/react-query";
 
@@ -16,7 +15,6 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
 
-  // Предварительная загрузка всех вопросов при монтировании компонента
   useEffect(() => {
     preloadAllQuestions();
   }, []);
@@ -24,8 +22,6 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const { data: questions = [], isLoading, error } = useQuery({
     queryKey: ['questions', section],
     queryFn: () => loadQuestions(section),
-    enabled: true,
-    retry: false,
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,

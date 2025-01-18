@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { QuestionData } from "@/types/questions.types";
 import ProgressBar from "./question/ProgressBar";
 import QuestionImage from "./question/QuestionImage";

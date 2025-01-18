@@ -40,7 +40,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ 
-              duration: 0.15, // Уменьшили с 0.3 до 0.15
+              duration: 0.15,
               ease: "easeInOut"
             }}
           />
@@ -109,7 +109,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     draggable={false}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.15 }} // Уменьшили с 0.3 до 0.15
+                    transition={{ duration: 0.15 }}
                   />
                 </TransformComponent>
               </>
