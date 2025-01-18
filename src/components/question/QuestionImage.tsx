@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomOut, RotateCcw, X } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface QuestionImageProps {
   image: string;
@@ -14,6 +15,7 @@ interface QuestionImageProps {
 
 const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImageProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleImageClick = () => setIsImageOpen(true);
   const handleDialogClose = () => setIsImageOpen(false);
@@ -48,7 +50,9 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="max-w-[95vw] w-auto h-[95vh] p-0 overflow-hidden bg-black/95 border-none">
+        <DialogContent 
+          className={`max-w-[95vw] w-auto ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} p-0 overflow-hidden bg-black/95 border-none`}
+        >
           <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
           <TransformWrapper
             initialScale={1}
@@ -56,16 +60,20 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             maxScale={4}
             centerOnInit={true}
             limitToBounds={true}
-            wheel={{ wheelDisabled: false }}
+            wheel={{ wheelDisabled: isMobile }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
-            panning={{ velocityDisabled: true }}
+            panning={{ 
+              velocityDisabled: true,
+              lockAxisY: isMobile,
+              excluded: isMobile ? ['button', 'a'] : [] 
+            }}
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
-                <div className="absolute right-4 top-4 z-50 flex gap-2">
+                <div className={`${isMobile ? 'bottom-4 left-1/2 -translate-x-1/2' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -100,14 +108,14 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                   </Button>
                 </div>
                 <TransformComponent
-                  wrapperClass="w-[95vw] h-[95vh] flex items-center justify-center"
+                  wrapperClass={`w-[95vw] ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} flex items-center justify-center`}
                   contentClass="w-full h-full flex items-center justify-center"
                 >
                   <motion.img
                     key={image}
                     src={image}
                     alt="Question image"
-                    className="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain select-none"
+                    className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
                     draggable={false}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
