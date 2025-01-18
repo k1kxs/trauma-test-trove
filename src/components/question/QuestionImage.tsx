@@ -51,7 +51,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
         <DialogContent 
-          className={`max-w-[95vw] w-auto ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} p-0 overflow-hidden bg-black/95 border-none`}
+          className={`max-w-[95vw] w-auto ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} p-0 overflow-hidden border-none`}
         >
           <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
           <TransformWrapper
