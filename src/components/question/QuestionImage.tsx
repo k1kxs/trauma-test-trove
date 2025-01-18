@@ -45,9 +45,9 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             src={currentImage}
             alt="Question image"
             className="w-full h-full object-contain transition-transform group-hover:scale-105"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ 
               duration: 0.5,
               ease: "easeInOut"
