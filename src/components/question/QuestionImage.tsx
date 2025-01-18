@@ -65,34 +65,32 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             doubleClick={{ disabled: true }}
             panning={{ 
               velocityDisabled: true,
-              lockAxisY: isMobile,
-              excluded: isMobile ? ['button', 'a'] : [] 
+              excluded: ['button', 'a']
             }}
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
             initialPositionX={0}
             initialPositionY={0}
             onInit={(ref) => {
-              // Получаем размеры изображения и экрана
               const img = new Image();
               img.src = image;
               img.onload = () => {
-                const viewportWidth = window.innerWidth * 0.9; // 90% от ширины экрана
-                const viewportHeight = window.innerHeight * 0.9; // 90% от высоты экрана
+                const viewportWidth = window.innerWidth * (isMobile ? 0.95 : 0.9);
+                const viewportHeight = window.innerHeight * (isMobile ? 0.85 : 0.9);
                 const imageRatio = img.width / img.height;
                 const screenRatio = viewportWidth / viewportHeight;
 
                 let scale = 1;
                 if (imageRatio > screenRatio) {
-                  // Изображение шире экрана
                   scale = viewportWidth / img.width;
                 } else {
-                  // Изображение выше экрана
                   scale = viewportHeight / img.height;
                 }
                 
-                // Устанавливаем масштаб
-                ref.setTransform(0, 0, scale);
+                // Добавляем небольшую задержку для корректной инициализации
+                setTimeout(() => {
+                  ref.setTransform(0, 0, scale);
+                }, 50);
               };
             }}
           >
