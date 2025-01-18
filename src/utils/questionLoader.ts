@@ -46,14 +46,23 @@ const checkFileExists = async (url: string): Promise<boolean> => {
 
 const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   try {
-    const fileUrl = `/tests/${section}/${questionId}/question.txt`;
+    const questionPath = `/tests/${section}/${questionId}`;
+    const textFileUrl = `${questionPath}/question.txt`;
+    const imageFileUrl = `${questionPath}/image.png`;
     
-    // Проверяем существование файла перед загрузкой
-    if (!(await checkFileExists(fileUrl))) {
+    // Проверяем существование обоих файлов
+    const [textExists, imageExists] = await Promise.all([
+      checkFileExists(textFileUrl),
+      checkFileExists(imageFileUrl)
+    ]);
+    
+    // Если хотя бы один файл отсутствует, пропускаем этот вопрос
+    if (!textExists || !imageExists) {
+      console.log(`Пропущен вопрос ${questionId} в секции ${section}: отсутствуют необходимые файлы`);
       return null;
     }
     
-    const response = await fetch(fileUrl);
+    const response = await fetch(textFileUrl);
     
     if (!response.ok) {
       return null;
@@ -77,9 +86,10 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
       question: "",
       options: lines.slice(0, 4),
       correctAnswer: lines[4].trim(),
-      image: `/tests/${section}/${questionId}/image.png`
+      image: imageFileUrl
     };
-  } catch {
+  } catch (error) {
+    console.error(`Ошибка при загрузке вопроса ${questionId} в секции ${section}:`, error);
     return null;
   }
 };
