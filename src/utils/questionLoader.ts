@@ -12,10 +12,12 @@ const sections = [
   "foot"
 ];
 
+// Используем Map для кэширования
 const questionsCache = new Map<string, QuestionData[]>();
 const fileExistsCache = new Map<string, boolean>();
 const textCache = new Map<string, string>();
 
+// Оптимизированная проверка существования файла с кэшированием
 const checkFileExists = async (url: string): Promise<boolean> => {
   if (fileExistsCache.has(url)) {
     return fileExistsCache.get(url)!;
@@ -32,6 +34,7 @@ const checkFileExists = async (url: string): Promise<boolean> => {
   }
 };
 
+// Оптимизированная загрузка текстового файла с кэшированием
 const loadTextFile = async (url: string): Promise<string | null> => {
   if (textCache.has(url)) {
     return textCache.get(url)!;
@@ -53,13 +56,13 @@ const loadTextFile = async (url: string): Promise<string | null> => {
 const shuffleArray = <T>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
-    // Используем crypto.getRandomValues для более качественной рандомизации
     const j = Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1) * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
 };
 
+// Оптимизированный парсинг файла вопроса
 const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   const cacheKey = `${section}-${questionId}`;
   const questionPath = `/tests/${section}/${questionId}`;
@@ -95,6 +98,7 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
 
 let preloadPromise: Promise<void> | null = null;
 
+// Предзагрузка всех вопросов при старте приложения
 const preloadAllQuestions = () => {
   if (!preloadPromise) {
     preloadPromise = (async () => {

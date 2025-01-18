@@ -103,7 +103,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
         totalQuestions={questions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
-        onRestart={handleRestartTest} // Добавляем обработчик перезапуска
+        onRestart={handleRestartTest}
       />
     );
   }
