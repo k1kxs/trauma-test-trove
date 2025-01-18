@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
 import { QuestionData } from "@/types/questions.types";
-import { loadQuestions } from "@/utils/questionLoader";
+import { loadQuestions, preloadAllQuestions } from "@/utils/questionLoader";
 import { useQuery } from "@tanstack/react-query";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
@@ -16,16 +16,21 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
 
+  // Предварительная загрузка всех вопросов при монтировании компонента
+  useEffect(() => {
+    preloadAllQuestions();
+  }, []);
+
   const { data: questions = [], isLoading, error } = useQuery({
     queryKey: ['questions', section],
     queryFn: () => loadQuestions(section),
     enabled: true,
     retry: false,
-    staleTime: Infinity, // Предотвращает повторные запросы данных
-    gcTime: Infinity, // Держит данные в кэше бесконечно (новый параметр вместо cacheTime)
-    refetchOnWindowFocus: false, // Отключаем повторную загрузку при фокусе окна
-    refetchOnMount: false, // Отключаем повторную загрузку при монтировании
-    refetchOnReconnect: false // Отключаем повторную загрузку при восстановлении соединения
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false
   });
 
   if (isLoading) {
