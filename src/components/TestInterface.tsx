@@ -20,7 +20,12 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     queryKey: ['questions', section],
     queryFn: () => loadQuestions(section),
     enabled: true,
-    retry: false
+    retry: false,
+    staleTime: Infinity, // Предотвращает повторные запросы данных
+    cacheTime: Infinity, // Держит данные в кэше бесконечно
+    refetchOnWindowFocus: false, // Отключаем повторную загрузку при фокусе окна
+    refetchOnMount: false, // Отключаем повторную загрузку при монтировании
+    refetchOnReconnect: false // Отключаем повторную загрузку при восстановлении соединения
   });
 
   if (isLoading) {
