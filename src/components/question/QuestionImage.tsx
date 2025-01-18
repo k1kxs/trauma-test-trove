@@ -48,7 +48,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
       </div>
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="max-w-[95vw] w-auto h-[95vh] p-0 overflow-hidden bg-black/95 border-none flex items-center justify-center">
+        <DialogContent className="max-w-[95vw] w-auto h-[95vh] p-0 overflow-hidden bg-black/95 border-none">
           <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
           <TransformWrapper
             initialScale={1}
@@ -98,14 +98,14 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                   </Button>
                 </div>
                 <TransformComponent
-                  wrapperClass="!w-full !h-full flex items-center justify-center"
-                  contentClass="!w-auto !h-auto flex items-center justify-center"
+                  wrapperClass="w-[95vw] h-[95vh] flex items-center justify-center"
+                  contentClass="w-full h-full flex items-center justify-center"
                 >
                   <motion.img
                     key={image}
                     src={image}
                     alt="Question image"
-                    className="max-w-[95vw] max-h-[90vh] w-auto h-auto object-contain select-none"
+                    className="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain select-none"
                     draggable={false}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
