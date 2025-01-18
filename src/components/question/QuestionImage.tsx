@@ -14,15 +14,6 @@ interface QuestionImageProps {
 
 const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImageProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState(image);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentImage(image);
-    }, 500); // Задержка перед показом новой картинки
-
-    return () => clearTimeout(timer);
-  }, [currentQuestion, image]);
 
   const handleImageClick = () => setIsImageOpen(true);
   const handleDialogClose = () => setIsImageOpen(false);
@@ -41,15 +32,15 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
         </div>
         <AnimatePresence mode="wait">
           <motion.img
-            key={currentImage}
-            src={currentImage}
+            key={image}
+            src={image}
             alt="Question image"
             className="w-full h-full object-contain transition-transform group-hover:scale-105"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ 
-              duration: 0.5,
+              duration: 0.3,
               ease: "easeInOut"
             }}
           />
@@ -111,8 +102,8 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                   contentClass="!w-auto !h-auto flex items-center justify-center"
                 >
                   <motion.img
-                    key={currentImage}
-                    src={currentImage}
+                    key={image}
+                    src={image}
                     alt="Question image"
                     className="max-w-[90vw] max-h-[85vh] w-auto h-auto select-none"
                     draggable={false}
