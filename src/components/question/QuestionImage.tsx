@@ -79,7 +79,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomIn()}
-                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
                     <ZoomIn className="h-4 w-4 text-white" />
                   </Button>
@@ -87,7 +87,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => zoomOut()}
-                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
                     <ZoomOut className="h-4 w-4 text-white" />
                   </Button>
@@ -95,7 +95,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={() => resetTransform()}
-                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
                     <RotateCcw className="h-4 w-4 text-white" />
                   </Button>
@@ -103,7 +103,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={handleDialogClose}
-                    className="bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                    className="bg-purple-600/90 hover:bg-purple-700/90 backdrop-blur-sm shadow-lg hover:shadow-xl border-2 border-white/20"
                   >
                     <X className="h-4 w-4 text-white" />
                   </Button>
