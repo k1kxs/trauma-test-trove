@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { QuestionData } from "@/types/questions.types";
 
 interface TestResultsProps {
   correctAnswers: number;
   totalQuestions: number;
   onComplete: () => void;
+  onRestart: () => void;
   questions: Array<QuestionData & { userAnswer?: string }>;
 }
 
@@ -15,6 +16,7 @@ const TestResults = ({
   correctAnswers,
   totalQuestions, 
   onComplete,
+  onRestart,
   questions = []
 }: TestResultsProps) => {
   return (
@@ -37,13 +39,23 @@ const TestResults = ({
             </p>
           </div>
 
-          <Button
-            onClick={onComplete}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Вернуться к выбору раздела
-          </Button>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Button
+              onClick={onComplete}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Вернуться к выбору раздела
+            </Button>
+
+            <Button
+              onClick={onRestart}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Пройти тест заново
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

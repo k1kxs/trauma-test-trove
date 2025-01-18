@@ -12,12 +12,10 @@ const sections = [
   "foot"
 ];
 
-// Глобальный кэш для всех данных
 const questionsCache = new Map<string, QuestionData[]>();
 const fileExistsCache = new Map<string, boolean>();
 const textCache = new Map<string, string>();
 
-// Оптимизированная проверка существования файла
 const checkFileExists = async (url: string): Promise<boolean> => {
   if (fileExistsCache.has(url)) {
     return fileExistsCache.get(url)!;
@@ -34,7 +32,6 @@ const checkFileExists = async (url: string): Promise<boolean> => {
   }
 };
 
-// Оптимизированная загрузка текста
 const loadTextFile = async (url: string): Promise<string | null> => {
   if (textCache.has(url)) {
     return textCache.get(url)!;
@@ -52,18 +49,17 @@ const loadTextFile = async (url: string): Promise<string | null> => {
   }
 };
 
-// Функция для перемешивания массива
+// Улучшенная функция перемешивания массива с использованием алгоритма Фишера-Йейтса
 const shuffleArray = <T>(array: T[]): T[] => {
-  if (array.length <= 1) return array;
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    // Используем crypto.getRandomValues для более качественной рандомизации
+    const j = Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1) * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
 };
 
-// Загрузка одного вопроса с агрессивным кэшированием
 const parseQuestionFile = async (section: string, questionId: string): Promise<QuestionData | null> => {
   const cacheKey = `${section}-${questionId}`;
   const questionPath = `/tests/${section}/${questionId}`;
@@ -71,7 +67,6 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
   const imageFileUrl = `${questionPath}/image.png`;
 
   try {
-    // Параллельная проверка файлов
     const [textExists, imageExists] = await Promise.all([
       checkFileExists(textFileUrl),
       checkFileExists(imageFileUrl)
@@ -98,7 +93,6 @@ const parseQuestionFile = async (section: string, questionId: string): Promise<Q
   }
 };
 
-// Предварительная загрузка с единым Promise
 let preloadPromise: Promise<void> | null = null;
 
 const preloadAllQuestions = () => {
@@ -123,7 +117,6 @@ const preloadAllQuestions = () => {
   return preloadPromise;
 };
 
-// Основная функция загрузки с мгновенным возвратом из кэша
 export const loadQuestions = async (section: string | null): Promise<QuestionData[]> => {
   await preloadPromise;
 
@@ -134,7 +127,8 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
 
   const cachedQuestions = questionsCache.get(section);
   if (cachedQuestions) {
-    return shuffleArray(cachedQuestions);
+    // Всегда возвращаем новый перемешанный массив, даже если вопросы взяты из кэша
+    return shuffleArray([...cachedQuestions]);
   }
 
   const questions: QuestionData[] = [];
@@ -146,7 +140,8 @@ export const loadQuestions = async (section: string | null): Promise<QuestionDat
   questions.push(...results.filter((q): q is QuestionData => q !== null));
   questionsCache.set(section, questions);
 
-  return shuffleArray(questions);
+  // Возвращаем перемешанную копию массива
+  return shuffleArray([...questions]);
 };
 
 export { preloadAllQuestions };

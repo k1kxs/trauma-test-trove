@@ -14,16 +14,17 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
+  const [queryKey, setQueryKey] = useState([0]); // Добавляем ключ для принудительного обновления запроса
 
   useEffect(() => {
     preloadAllQuestions();
   }, []);
 
   const { data: questions = [], isLoading, error } = useQuery({
-    queryKey: ['questions', section],
+    queryKey: ['questions', section, ...queryKey], // Добавляем queryKey в зависимости
     queryFn: () => loadQuestions(section),
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 0, // Отключаем кэширование на уровне React Query
+    gcTime: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false
@@ -81,6 +82,15 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     setShowResult(true);
   };
 
+  const handleRestartTest = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setCorrectAnswers(0);
+    setShowResult(false);
+    setUserAnswers({});
+    setQueryKey(prev => [prev[0] + 1]); // Обновляем ключ для получения нового набора вопросов
+  };
+
   if (showResult) {
     const questionsWithUserAnswers = questions.map(q => ({
       ...q,
@@ -93,6 +103,7 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
         totalQuestions={questions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
+        onRestart={handleRestartTest} // Добавляем обработчик перезапуска
       />
     );
   }
