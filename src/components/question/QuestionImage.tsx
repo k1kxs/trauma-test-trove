@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ZoomIn } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,11 @@ interface QuestionImageProps {
 
 const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImageProps) => {
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const imageRef = useRef<string>(image);
+  const [currentImage, setCurrentImage] = useState(image);
+
+  useEffect(() => {
+    setCurrentImage(image);
+  }, [image, currentQuestion]);
 
   const handleImageClick = () => setIsImageOpen(true);
   const handleDialogClose = () => setIsImageOpen(false);
@@ -31,10 +35,14 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 transition-opacity">
           <ZoomIn className="w-8 h-8 text-gray-700" />
         </div>
-        <img
-          src={imageRef.current}
+        <motion.img
+          key={currentImage}
+          src={currentImage}
           alt="Question image"
           className="w-full h-full object-contain transition-transform group-hover:scale-105"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         />
       </div>
 
@@ -93,7 +101,8 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                   contentClass="!w-auto !h-auto flex items-center justify-center"
                 >
                   <motion.img
-                    src={imageRef.current}
+                    key={currentImage}
+                    src={currentImage}
                     alt="Question image"
                     className="max-w-[90vw] max-h-[85vh] w-auto h-auto select-none"
                     draggable={false}
