@@ -55,7 +55,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
         >
           <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
           <TransformWrapper
-            initialScale={2}
+            initialScale={5}
             minScale={0.5}
             maxScale={4}
             centerOnInit={true}
