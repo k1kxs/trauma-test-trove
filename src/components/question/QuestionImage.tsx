@@ -55,11 +55,13 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             minScale={0.5}
             maxScale={4}
             centerOnInit={true}
-            limitToBounds={false}
+            limitToBounds={true}
             wheel={{ wheelDisabled: false }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
             panning={{ velocityDisabled: true }}
+            alignmentAnimation={{ disabled: true }}
+            centerZoomedOut={true}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
