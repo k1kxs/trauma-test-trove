@@ -30,7 +30,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
           {currentQuestion + 1}/{totalQuestions}
         </div>
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/5 transition-opacity">
-          <ZoomIn className="w-8 h-8 text-gray-900" />
+          <ZoomIn className="w-8 h-8 text-gray-700" />
         </div>
         <AnimatePresence mode="wait">
           <motion.img
@@ -79,9 +79,9 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={handleDialogClose}
-                    className="bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 hover:from-purple-700 hover:via-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl border-none animate-gradient bg-300%"
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 text-gray-900" />
                   </Button>
                 </div>
                 <TransformComponent
