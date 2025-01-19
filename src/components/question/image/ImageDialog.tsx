@@ -19,17 +19,17 @@ const ImageDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className={`max-w-screen max-h-screen w-screen h-screen p-0 m-0 overflow-hidden border-none bg-black/95 ${isMobile ? 'rounded-none' : 'rounded-lg'}`}
+        className="fixed inset-0 w-screen h-screen p-0 m-0 overflow-hidden border-none bg-black/95"
         hideCloseButton={true}
       >
         <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
         <TransformWrapper
           initialScale={1}
           minScale={0.5}
-          maxScale={4}
+          maxScale={3}
           centerOnInit={true}
           limitToBounds={true}
-          wheel={{ wheelDisabled: isMobile }}
+          wheel={{ wheelDisabled: true }}
           pinch={{ disabled: false }}
           doubleClick={{ disabled: true }}
           panning={{ 
@@ -37,30 +37,35 @@ const ImageDialog = ({
             lockAxisY: false,
             excluded: ['button', 'a']
           }}
-          alignmentAnimation={{ disabled: true }}
+          alignmentAnimation={{ 
+            disabled: true,
+            sizeX: 'none',
+            sizeY: 'none'
+          }}
           centerZoomedOut={true}
         >
-          {({ zoomIn, zoomOut }) => (
+          {({ zoomIn, zoomOut, resetTransform }) => (
             <>
               <ZoomControls
                 isMobile={isMobile}
-                onZoomIn={zoomIn}
-                onZoomOut={zoomOut}
+                onZoomIn={() => zoomIn(0.7)}
+                onZoomOut={() => zoomOut(0.7)}
+                onReset={resetTransform}
                 onClose={onClose}
               />
               <TransformComponent
                 wrapperClass="w-full h-full flex items-center justify-center"
-                contentClass="w-full h-full flex items-center justify-center"
+                contentClass="w-full h-full flex items-center justify-center p-4"
               >
                 <motion.img
                   key={image}
                   src={image}
                   alt="Question image"
-                  className="w-auto h-auto max-w-[98vw] max-h-[98vh] object-contain select-none"
+                  className="w-auto h-auto max-w-[95vw] max-h-[90vh] object-contain select-none"
                   draggable={false}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.15 }}
+                  transition={{ duration: 0.2 }}
                 />
               </TransformComponent>
             </>
