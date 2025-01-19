@@ -55,53 +55,78 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
           hideCloseButton={true}
         >
           <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
-          <TransformWrapper
-            initialScale={1}
-            minScale={0.5}
-            maxScale={4}
-            centerOnInit={true}
-            limitToBounds={true}
-            wheel={{ wheelDisabled: isMobile }}
-            pinch={{ disabled: isMobile }}
-            doubleClick={{ disabled: true }}
-            panning={{ 
-              velocityDisabled: true,
-              lockAxisY: false,
-              excluded: ['button', 'a']
-            }}
-            alignmentAnimation={{ disabled: true }}
-            centerZoomedOut={true}
-          >
-            {({ resetTransform }) => (
-              <>
-                <div className={`${isMobile ? 'top-4 right-4' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleDialogClose}
-                    className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <TransformComponent
-                  wrapperClass={`w-[95vw] ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} flex items-center justify-center`}
-                  contentClass="w-full h-full flex items-center justify-center"
+          {isMobile ? (
+            <div className="w-full h-full flex items-center justify-center relative">
+              <div className="absolute right-4 top-4 z-50">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleDialogClose}
+                  className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
                 >
-                  <motion.img
-                    key={image}
-                    src={image}
-                    alt="Question image"
-                    className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
-                    draggable={false}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.15 }}
-                  />
-                </TransformComponent>
-              </>
-            )}
-          </TransformWrapper>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <motion.img
+                key={image}
+                src={image}
+                alt="Question image"
+                className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
+                draggable={false}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15 }}
+              />
+            </div>
+          ) : (
+            <TransformWrapper
+              initialScale={1}
+              minScale={0.5}
+              maxScale={4}
+              centerOnInit={true}
+              limitToBounds={true}
+              wheel={{ wheelDisabled: isMobile }}
+              pinch={{ disabled: isMobile }}
+              doubleClick={{ disabled: true }}
+              panning={{ 
+                velocityDisabled: true,
+                lockAxisY: false,
+                excluded: ['button', 'a']
+              }}
+              alignmentAnimation={{ disabled: true }}
+              centerZoomedOut={true}
+            >
+              {({ resetTransform }) => (
+                <>
+                  <div className="right-4 top-4 absolute z-50 flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleDialogClose}
+                      className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <TransformComponent
+                    wrapperClass={`w-[95vw] ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} flex items-center justify-center`}
+                    contentClass="w-full h-full flex items-center justify-center"
+                  >
+                    <motion.img
+                      key={image}
+                      src={image}
+                      alt="Question image"
+                      className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
+                      draggable={false}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.15 }}
+                    />
+                  </TransformComponent>
+                </>
+              )}
+            </TransformWrapper>
+          )}
         </DialogContent>
       </Dialog>
     </>
