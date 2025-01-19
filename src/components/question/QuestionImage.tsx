@@ -61,7 +61,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             maxScale={4}
             centerOnInit={true}
             limitToBounds={true}
-            wheel={{ wheelDisabled: false }}
+            wheel={{ wheelDisabled: isMobile }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
             panning={{ 
@@ -72,9 +72,29 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             alignmentAnimation={{ disabled: true }}
             centerZoomedOut={true}
           >
-            {({ resetTransform }) => (
+            {({ zoomIn, zoomOut, resetTransform }) => (
               <>
-                <div className={`${isMobile ? 'top-4 right-4' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
+                <div className={`${isMobile ? 'bottom-4 left-1/2 -translate-x-1/2' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
+                  {isMobile && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => zoomIn()}
+                        className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+                      >
+                        <ZoomIn className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => zoomOut()}
+                        className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+                      >
+                        <ZoomIn className="h-4 w-4 rotate-180" />
+                      </Button>
+                    </>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"
