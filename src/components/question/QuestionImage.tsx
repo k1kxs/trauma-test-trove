@@ -50,7 +50,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
 
       <Dialog open={isImageOpen} onOpenChange={handleDialogClose}>
         <DialogContent 
-          className="max-w-[100vw] w-screen h-screen p-0 overflow-hidden border-none bg-black/90 backdrop-blur-md m-0"
+          className="max-w-[95vw] w-auto h-[95vh] p-0 overflow-hidden border-none bg-transparent backdrop-blur-md"
           hideCloseButton={true}
         >
           <TransformWrapper
@@ -72,7 +72,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
           >
             {({ resetTransform }) => (
               <>
-                <div className="absolute right-4 top-4 z-50 flex gap-2">
+                <div className="right-4 top-4 absolute z-50 flex gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -83,16 +83,14 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                   </Button>
                 </div>
                 <TransformComponent
-                  wrapperClass="w-screen h-screen flex items-center justify-center"
-                  contentClass="w-full h-full flex items-center justify-center p-4"
+                  wrapperClass="w-[95vw] h-[95vh] flex items-center justify-center"
+                  contentClass="w-full h-full flex items-center justify-center"
                 >
                   <motion.img
                     key={image}
                     src={image}
                     alt="Question image"
-                    className={`max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none ${
-                      isMobile ? 'touch-none' : ''
-                    }`}
+                    className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
                     draggable={false}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
