@@ -17,32 +17,40 @@ const AnswerOptions = ({
 
   return (
     <div className="grid gap-3">
-      {options.map((option, index) => (
-        <Button
-          key={index}
-          onClick={() => onAnswerSelect(answerLetters[index])}
-          variant={selectedAnswer === answerLetters[index] ? 
-            (answerLetters[index] === correctAnswer ? "default" : "destructive") 
-            : "outline"
-          }
-          className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
-            ${selectedAnswer === null ? 
-              'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
-              ''
+      {options.map((option, index) => {
+        const currentLetter = answerLetters[index];
+        const isSelected = selectedAnswer === currentLetter;
+        const isCorrect = currentLetter === correctAnswer;
+        
+        return (
+          <Button
+            key={index}
+            onClick={() => onAnswerSelect(currentLetter)}
+            variant={isSelected ? 
+              (isCorrect ? "default" : "destructive") 
+              : "outline"
             }
-            ${selectedAnswer === answerLetters[index] ? 
-              (answerLetters[index] === correctAnswer ? 
-                'bg-green-500 hover:bg-green-600 text-white border-none' : 
-                'bg-red-500 hover:bg-red-600 text-white border-none'
-              ) : 
-              'bg-gray-50/50 text-gray-700 border-gray-200'
-            }
-          `}
-          disabled={selectedAnswer !== null}
-        >
-          {option}
-        </Button>
-      ))}
+            className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
+              ${selectedAnswer === null ? 
+                'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
+                ''
+              }
+              ${selectedAnswer !== null ? 
+                (isCorrect ? 
+                  'bg-green-500 hover:bg-green-600 text-white border-none' : 
+                  isSelected ?
+                    'bg-red-500 hover:bg-red-600 text-white border-none' :
+                    'bg-gray-50/50 text-gray-700 border-gray-200'
+                ) : 
+                'bg-gray-50/50 text-gray-700 border-gray-200'
+              }
+            `}
+            disabled={selectedAnswer !== null}
+          >
+            {option}
+          </Button>
+        );
+      })}
     </div>
   );
 };
