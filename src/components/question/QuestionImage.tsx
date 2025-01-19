@@ -52,8 +52,6 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
         <DialogContent 
           className="max-w-[95vw] w-auto h-[95vh] p-0 overflow-hidden border-none bg-transparent backdrop-blur-md"
           hideCloseButton={true}
-          onPointerDownOutside={handleDialogClose}
-          onEscapeKeyDown={handleDialogClose}
         >
           <TransformWrapper
             initialScale={1}
