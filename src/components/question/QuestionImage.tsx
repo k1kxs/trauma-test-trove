@@ -61,8 +61,8 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             maxScale={4}
             centerOnInit={true}
             limitToBounds={true}
-            wheel={{ wheelDisabled: false }}
-            pinch={{ disabled: false }}
+            wheel={{ wheelDisabled: isMobile }}
+            pinch={{ disabled: isMobile }}
             doubleClick={{ disabled: true }}
             panning={{ 
               velocityDisabled: true,
