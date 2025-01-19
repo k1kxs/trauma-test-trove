@@ -15,24 +15,24 @@ const ZoomControls = ({
   onClose 
 }: ZoomControlsProps) => {
   return (
-    <div className={`${isMobile ? 'bottom-4 left-1/2 -translate-x-1/2' : 'right-4 top-4'} absolute z-50 flex gap-2`}>
+    <div className={`${isMobile ? 'bottom-8 left-1/2 -translate-x-1/2' : 'right-4 top-4'} fixed z-50 flex gap-2`}>
       {isMobile && (
         <>
           <Button
             variant="ghost"
             size="icon"
             onClick={onZoomIn}
-            className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white shadow-lg hover:shadow-xl border-none w-12 h-12"
           >
-            <ZoomIn className="h-4 w-4" />
+            <ZoomIn className="h-6 w-6" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={onZoomOut}
-            className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white shadow-lg hover:shadow-xl border-none w-12 h-12"
           >
-            <ZoomIn className="h-4 w-4 rotate-180" />
+            <ZoomIn className="h-6 w-6 rotate-180" />
           </Button>
         </>
       )}
@@ -40,9 +40,9 @@ const ZoomControls = ({
         variant="ghost"
         size="icon"
         onClick={onClose}
-        className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
+        className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white shadow-lg hover:shadow-xl border-none w-12 h-12"
       >
-        <X className="h-4 w-4" />
+        <X className="h-6 w-6" />
       </Button>
     </div>
   );

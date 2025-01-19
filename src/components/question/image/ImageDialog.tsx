@@ -19,7 +19,7 @@ const ImageDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className={`max-w-[95vw] w-auto ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} p-0 overflow-hidden border-none bg-transparent`}
+        className={`max-w-screen max-h-screen w-screen h-screen p-0 m-0 overflow-hidden border-none bg-black/95 ${isMobile ? 'rounded-none' : 'rounded-lg'}`}
         hideCloseButton={true}
       >
         <DialogTitle className="sr-only">Просмотр изображения</DialogTitle>
@@ -49,14 +49,14 @@ const ImageDialog = ({
                 onClose={onClose}
               />
               <TransformComponent
-                wrapperClass={`w-[95vw] ${isMobile ? 'h-[85vh]' : 'h-[95vh]'} flex items-center justify-center`}
+                wrapperClass="w-full h-full flex items-center justify-center"
                 contentClass="w-full h-full flex items-center justify-center"
               >
                 <motion.img
                   key={image}
                   src={image}
                   alt="Question image"
-                  className="max-w-[95vw] max-h-[85vh] w-auto h-auto object-contain select-none"
+                  className="w-auto h-auto max-w-[98vw] max-h-[98vh] object-contain select-none"
                   draggable={false}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
