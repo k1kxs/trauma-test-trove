@@ -61,7 +61,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
             maxScale={4}
             centerOnInit={true}
             limitToBounds={true}
-            wheel={{ wheelDisabled: false }}
+            wheel={{ wheelDisabled: isMobile }}
             pinch={{ disabled: false }}
             doubleClick={{ disabled: true }}
             panning={{ 
@@ -79,9 +79,9 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
                     variant="ghost"
                     size="icon"
                     onClick={handleDialogClose}
-                    className="bg-white/20 hover:bg-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl border border-white/30"
+                    className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-600 hover:via-purple-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl border-none"
                   >
-                    <X className="h-4 w-4 text-gray-900" />
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
                 <TransformComponent
