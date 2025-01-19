@@ -23,7 +23,7 @@ const QuestionImage = ({ image, currentQuestion, totalQuestions }: QuestionImage
   return (
     <>
       <div 
-        className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner group cursor-zoom-in"
+        className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner group cursor-zoom-in flex items-center justify-center"
         onClick={handleImageClick}
       >
         <div className="absolute top-3 right-3 bg-black/40 text-white px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-[2px]">
