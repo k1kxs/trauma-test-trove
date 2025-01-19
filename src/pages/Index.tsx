@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Card, CardContent } from "@/components/ui/card";
 
 type UserData = {
   fullName: string;
@@ -58,8 +58,6 @@ const Index = () => {
     }
   };
 
-  const showThemeToggle = currentScreen !== "test";
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -67,7 +65,6 @@ const Index = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-background via-purple-50/30 to-blue-50/30 dark:from-background dark:via-purple-900/10 dark:to-blue-900/10"
     >
-      {showThemeToggle && <ThemeToggle />}
       <div className="max-w-md mx-auto p-6">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -116,7 +113,7 @@ const Index = () => {
             <Button
               variant="outline"
               onClick={handleBack}
-              className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-300 shadow-sm hover:shadow-md transition-all duration-500 dark:from-gray-900 dark:to-gray-800 dark:hover:from-gray-800 dark:hover:to-gray-900"
+              className="w-full flex items-center justify-center gap-2 shadow-sm bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white border-gray-200 hover:border-300 shadow-sm hover:shadow-md transition-all duration-500"
             >
               <ArrowLeft className="w-4 h-4" />
               Назад
