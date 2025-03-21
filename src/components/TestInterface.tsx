@@ -1,36 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import TestResults from "./TestResults";
 import QuestionDisplay from "./QuestionDisplay";
 import { TestInterfaceProps } from "@/types/test.types";
-import { mockQuestions } from "@/data/mockQuestions";
-import { Button } from "./ui/button";
+import { loadQuestions, preloadAllQuestions } from "@/utils/questionLoader";
+import { useQuery } from "@tanstack/react-query";
 
 const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
-  const filteredQuestions = section 
-    ? mockQuestions.filter(q => q.section === section)
-    : mockQuestions;
-
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
+  const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
+  const [queryKey, setQueryKey] = useState([0]); // Добавляем ключ для принудительного обновления запроса
 
-  const handleAnswerSelect = (answerIndex: number) => {
+  useEffect(() => {
+    preloadAllQuestions();
+  }, []);
+
+  const { data: questions = [], isLoading, error } = useQuery({
+    queryKey: ['questions', section, ...queryKey], // Добавляем queryKey в зависимости
+    queryFn: () => loadQuestions(section),
+    staleTime: 0, // Отключаем кэширование на уровне React Query
+    gcTime: 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="text-gray-600">Загрузка вопросов...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600 p-4">
+        Произошла ошибка при загрузке вопросов. Пожалуйста, попробуйте позже.
+      </div>
+    );
+  }
+
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="text-center text-gray-600 p-4">
+        Вопросы не найдены для данного раздела.
+      </div>
+    );
+  }
+
+  const handleAnswerSelect = (answerIndex: string) => {
     setSelectedAnswer(answerIndex);
     setUserAnswers(prev => ({
       ...prev,
-      [currentQuestion]: answerIndex
+      [questions[currentQuestion].id]: answerIndex
     }));
     
-    if (answerIndex === filteredQuestions[currentQuestion].correctAnswer) {
+    if (answerIndex === questions[currentQuestion].correctAnswer) {
       setCorrectAnswers(prev => prev + 1);
     }
     
     setTimeout(() => {
-      if (currentQuestion < filteredQuestions.length - 1) {
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
       } else {
@@ -43,18 +82,28 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
     setShowResult(true);
   };
 
+  const handleRestartTest = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setCorrectAnswers(0);
+    setShowResult(false);
+    setUserAnswers({});
+    setQueryKey(prev => [prev[0] + 1]); // Обновляем ключ для получения нового набора вопросов
+  };
+
   if (showResult) {
-    const questionsWithUserAnswers = filteredQuestions.map(q => ({
+    const questionsWithUserAnswers = questions.map(q => ({
       ...q,
-      userAnswer: userAnswers[filteredQuestions.indexOf(q)]
+      userAnswer: userAnswers[q.id]
     }));
 
     return (
       <TestResults
         correctAnswers={correctAnswers}
-        totalQuestions={filteredQuestions.length}
+        totalQuestions={questions.length}
         onComplete={onComplete}
         questions={questionsWithUserAnswers}
+        onRestart={handleRestartTest}
       />
     );
   }
@@ -69,9 +118,9 @@ const TestInterface = ({ section, onComplete }: TestInterfaceProps) => {
       <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl">
         <CardContent className="px-8 py-8">
           <QuestionDisplay
-            question={filteredQuestions[currentQuestion]}
+            question={questions[currentQuestion]}
             currentQuestion={currentQuestion}
-            totalQuestions={filteredQuestions.length}
+            totalQuestions={questions.length}
             selectedAnswer={selectedAnswer}
             onAnswerSelect={handleAnswerSelect}
             onComplete={handleEarlyCompletion}

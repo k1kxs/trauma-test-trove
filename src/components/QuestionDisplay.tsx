@@ -1,20 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-
-interface Question {
-  id: number;
-  image: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-}
+import { QuestionData } from "@/types/questions.types";
+import ProgressBar from "./question/ProgressBar";
+import QuestionImage from "./question/QuestionImage";
+import AnswerOptions from "./question/AnswerOptions";
 
 interface QuestionDisplayProps {
-  question: Question;
+  question: QuestionData;
   currentQuestion: number;
   totalQuestions: number;
-  selectedAnswer: number | null;
-  onAnswerSelect: (index: number) => void;
+  selectedAnswer: string | null;
+  onAnswerSelect: (answer: string) => void;
   onComplete: () => void;
 }
 
@@ -24,55 +18,30 @@ const QuestionDisplay = ({
   totalQuestions,
   selectedAnswer,
   onAnswerSelect,
-  onComplete
 }: QuestionDisplayProps) => {
-  const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  if (!question) {
+    return <div>Loading question...</div>;
+  }
 
   return (
     <div className="space-y-6">
-      <div>
-        <Progress value={progress} className="h-2 bg-gray-100" />
-      </div>
+      <ProgressBar 
+        currentQuestion={currentQuestion} 
+        totalQuestions={totalQuestions} 
+      />
 
-      <div className="relative aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden shadow-inner">
-        <div className="absolute top-3 right-3 bg-black/40 text-white px-2 py-0.5 rounded-full text-xs font-medium backdrop-blur-[2px]">
-          {currentQuestion + 1}/{totalQuestions}
-        </div>
-        <img
-          src={question.image}
-          alt="Тестовое изображение"
-          className="w-full h-full object-contain"
-        />
-      </div>
+      <QuestionImage 
+        image={question.image}
+        currentQuestion={currentQuestion}
+        totalQuestions={totalQuestions}
+      />
 
-      <div className="grid gap-3">
-        {question.options.map((option, index) => (
-          <Button
-            key={index}
-            onClick={() => onAnswerSelect(index)}
-            variant={selectedAnswer === index ? 
-              (index === question.correctAnswer ? "default" : "destructive") 
-              : "outline"
-            }
-            className={`w-full min-h-[3rem] h-auto whitespace-normal font-medium px-4 py-2 rounded-lg transition-all duration-300
-              ${selectedAnswer === null ? 
-                'hover:bg-purple-50/50 hover:text-purple-700 hover:border-purple-300 hover:shadow-md' : 
-                ''
-              }
-              ${selectedAnswer === index ? 
-                (index === question.correctAnswer ? 
-                  'bg-green-500 hover:bg-green-600 text-white border-none' : 
-                  'bg-red-500 hover:bg-red-600 text-white border-none'
-                ) : 
-                'bg-gray-50/50 text-gray-700 border-gray-200'
-              }
-            `}
-            disabled={selectedAnswer !== null}
-          >
-            {option}
-          </Button>
-        ))}
-      </div>
+      <AnswerOptions 
+        options={question.options}
+        selectedAnswer={selectedAnswer}
+        correctAnswer={question.correctAnswer}
+        onAnswerSelect={onAnswerSelect}
+      />
     </div>
   );
 };

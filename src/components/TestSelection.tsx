@@ -11,15 +11,15 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
   const [showSections, setShowSections] = useState(false);
   
   const sections = [
-    "Плечо",
-    "Предплечье",
-    "Кисть",
-    "Рёбра",
-    "Позвоночник",
-    "Таз",
-    "Бедро",
-    "Голень",
-    "Стопа"
+    { id: "humerus", name: "Плечо" },
+    { id: "forearm", name: "Предплечье" },
+    { id: "brush", name: "Кисть" },
+    { id: "ribs", name: "Рёбра" },
+    { id: "spine", name: "Позвоночник" },
+    { id: "pelvis", name: "Таз" },
+    { id: "hip", name: "Бедро" },
+    { id: "shin", name: "Голень" },
+    { id: "foot", name: "Стопа" }
   ];
 
   const handleAllSectionsClick = () => {
@@ -92,13 +92,13 @@ const TestSelection = ({ onSectionSelect }: TestSelectionProps) => {
               className="space-y-2"
             >
               {sections.map((section) => (
-                <motion.div key={section} variants={item}>
+                <motion.div key={section.id} variants={item}>
                   <Button
-                    onClick={() => onSectionSelect(section)}
+                    onClick={() => onSectionSelect(section.id)}
                     variant="outline"
                     className="w-full min-h-[3rem] h-auto whitespace-normal bg-gray-50/50 hover:bg-purple-50/50 text-gray-700 hover:text-purple-700 font-medium px-3 py-2 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border border-gray-200 hover:border-purple-300 text-sm"
                   >
-                    {section}
+                    {section.name}
                   </Button>
                 </motion.div>
               ))}
